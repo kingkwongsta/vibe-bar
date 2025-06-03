@@ -1,0 +1,64 @@
+# Cursor Rules for Vibe Bar Project
+
+## Code Style & Formatting
+- Use 2 spaces for indentation (no tabs)
+- Use semicolons in JavaScript/TypeScript
+- Use single quotes for strings unless double quotes are needed
+- Use trailing commas in objects and arrays
+- Keep line length under 100 characters
+- Use camelCase for variables and functions, PascalCase for classes and components
+
+## File Structure & Naming
+- Use kebab-case for file names (e.g., `user-profile.tsx`)
+- Use PascalCase for React components
+- Group related files in folders
+- Keep components small and focused (under 200 lines)
+
+## React/Frontend Guidelines
+- Use functional components with hooks over class components
+- Prefer TypeScript over JavaScript for type safety
+- Use meaningful component and variable names
+- Extract reusable logic into custom hooks
+- Use proper error boundaries and error handling
+- Implement proper loading states and user feedback
+
+## Code Quality
+- Write clean, readable, and maintainable code
+- Add comments for complex logic, not obvious code
+- Use descriptive commit messages
+- Write unit tests for critical functionality
+- Handle edge cases and error scenarios
+- Use modern ES6+ features and best practices
+
+## Dependencies & Libraries
+- Prefer established, well-maintained libraries
+- Keep dependencies minimal and up-to-date
+- Document any external dependencies and their purpose
+- Use package.json scripts for common tasks
+
+## Git & Collaboration
+- Make atomic commits with descriptive messages
+- Use feature branches for new development
+- Write clear PR descriptions
+- Review code thoroughly before merging
+
+## Performance
+- Optimize for performance when necessary
+- Use lazy loading for components and routes
+- Minimize bundle size
+- Implement proper caching strategies
+
+## Accessibility
+- Follow WCAG guidelines
+- Use semantic HTML elements
+- Provide proper ARIA labels and roles
+- Ensure keyboard navigation works
+- Test with screen readers
+
+## Security
+- Validate and sanitize user inputs
+- Use HTTPS in production
+- Handle sensitive data properly
+- Keep dependencies updated for security patches
+
+Remember: Prioritize code readability, maintainability, and user experience in all development decisions. 
