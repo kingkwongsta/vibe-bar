@@ -112,56 +112,13 @@ export function LandingView({
             {/* Custom Ingredients Section */}
             <div>
               {/* Custom Ingredient Input */}
-              <form onSubmit={handleAddCustomIngredient} className="mb-4">
-                <Input
-                  type="text"
-                  placeholder="Add custom ingredients (e.g., Aperol, Elderflower Liqueur, Prosecco...) - separate with commas"
-                  value={customIngredientInput}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value.endsWith(',')) {
-                      // Remove the comma and add the ingredient
-                      const ingredient = value.slice(0, -1).trim();
-                      if (ingredient) {
-                        setCustomIngredientInput('');
-                        // Simulate adding the ingredient by calling the existing function
-                        const tempInput = customIngredientInput;
-                        setCustomIngredientInput(ingredient);
-                        setTimeout(() => {
-                          addCustomIngredient();
-                        }, 0);
-                      }
-                    } else {
-                      setCustomIngredientInput(value);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (customIngredientInput.trim()) {
-                      addCustomIngredient();
-                    }
-                  }}
-                  className="w-full"
-                />
-              </form>
-
-              {/* Display Custom Ingredients */}
-              {customIngredients.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {customIngredients.map((ingredient) => (
-                    <Badge
-                      key={ingredient}
-                      variant="secondary"
-                      className="cursor-pointer p-2 text-center justify-center transition-all bg-green-100 hover:bg-green-200 border-green-300 text-green-800 group"
-                    >
-                      {ingredient}
-                      <X 
-                        className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" 
-                        onClick={() => removeCustomIngredient(ingredient)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
+              <Input
+                type="text"
+                placeholder="Add custom ingredients separated by commas (e.g., Aperol, Elderflower Liqueur, Prosecco)"
+                value={customIngredientInput}
+                onChange={(e) => setCustomIngredientInput(e.target.value)}
+                className="w-full"
+              />
             </div>
 
             {/* Flavor Preferences */}
