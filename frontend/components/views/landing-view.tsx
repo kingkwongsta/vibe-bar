@@ -29,6 +29,7 @@ interface LandingViewProps {
   customIngredientInput: string
   selectedAlcoholStrength: string | null
   selectedVibe: string | null
+  specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
   addCustomIngredient: () => void
@@ -36,6 +37,7 @@ interface LandingViewProps {
   setCustomIngredientInput: (input: string) => void
   setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
+  updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
 }
 
@@ -48,6 +50,7 @@ export function LandingView({
   customIngredientInput,
   selectedAlcoholStrength,
   selectedVibe,
+  specialRequests,
   toggleIngredient,
   toggleFlavor,
   addCustomIngredient,
@@ -55,6 +58,7 @@ export function LandingView({
   setCustomIngredientInput,
   setAlcoholStrength,
   setVibe,
+  updateSpecialRequests,
   userPreferences,
 }: LandingViewProps) {
   const handleAddCustomIngredient = (e: React.FormEvent) => {
@@ -78,6 +82,7 @@ export function LandingView({
       strength: selectedAlcoholStrength || userPreferences.defaultStrength,
       vibe: selectedVibe || userPreferences.defaultVibe,
       dietaryRestrictions: userPreferences.dietaryRestrictions,
+      specialRequests: specialRequests.trim() || undefined,
       userContext: {
         preferredSpirits: userPreferences.baseSpirits,
         preferredFlavors: userPreferences.flavorProfiles,
@@ -218,10 +223,12 @@ export function LandingView({
 
             {/* Special Requests */}
             <div>
-              <Label className="text-sm font-medium mb-2 block">Special requests or dietary restrictions</Label>
+              <Label className="text-lg font-semibold mb-4 block">Special requests or dietary restrictions</Label>
               <Textarea
-                placeholder="e.g., No citrus, make it batch-friendly, surprise me with something unique..."
-                className="resize-none"
+                placeholder="e.g., No citrus, make it batch-friendly, surprise me with something unique, gluten-free options..."
+                className="resize-none min-h-[100px]"
+                value={specialRequests}
+                onChange={(e) => updateSpecialRequests(e.target.value)}
               />
             </div>
 

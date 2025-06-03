@@ -12,6 +12,8 @@ export function useVibeBar() {
   const [customIngredientInput, setCustomIngredientInput] = useState("")
   const [selectedAlcoholStrength, setSelectedAlcoholStrength] = useState<string | null>(null)
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null)
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([])
+  const [specialRequests, setSpecialRequests] = useState("")
 
   // Enhanced view setter with logging
   const setCurrentViewWithLogging = (view: ViewType) => {
@@ -102,11 +104,42 @@ export function useVibeBar() {
     }, 'change')
   }
 
+  const updateSpecialRequests = (requests: string) => {
+    setSpecialRequests(requests)
+    
+    // Log special requests update
+    logger.logPreferenceSelection('special-requests', {
+      requests: requests.substring(0, 50) + (requests.length > 50 ? '...' : ''), // Log first 50 chars for privacy
+      length: requests.length
+    }, 'change')
+  }
+
+  const toggleDietaryRestriction = (restriction: string) => {
+    setDietaryRestrictions((prev) => {
+      const isRemoving = prev.includes(restriction)
+      const newRestrictions = isRemoving 
+        ? prev.filter((r) => r !== restriction) 
+        : [...prev, restriction]
+      
+      // Log dietary restriction toggle
+      logger.logPreferenceSelection(
+        'dietary-restriction', 
+        restriction, 
+        isRemoving ? 'deselect' : 'select'
+      )
+      
+      return newRestrictions
+    })
+  }
+
   const getFormData = (): CocktailFormData => {
     const formData = {
       selectedIngredients: [...selectedIngredients, ...customIngredients],
       selectedFlavors,
       customIngredients,
+      strength: selectedAlcoholStrength || undefined,
+      occasion: selectedVibe || undefined,
+      specialRequests: specialRequests.trim() || undefined,
     }
     
     // Log form data collection
@@ -115,7 +148,9 @@ export function useVibeBar() {
       totalFlavors: formData.selectedFlavors.length,
       customIngredients: formData.customIngredients.length,
       alcoholStrength: selectedAlcoholStrength,
-      vibe: selectedVibe
+      vibe: selectedVibe,
+      hasSpecialRequests: !!formData.specialRequests,
+      dietaryRestrictions: dietaryRestrictions.length
     })
     
     return formData
@@ -129,7 +164,9 @@ export function useVibeBar() {
         flavors: selectedFlavors.length,
         customIngredients: customIngredients.length,
         alcoholStrength: selectedAlcoholStrength,
-        vibe: selectedVibe
+        vibe: selectedVibe,
+        specialRequests: specialRequests.length,
+        dietaryRestrictions: dietaryRestrictions.length
       }
     })
     
@@ -139,6 +176,8 @@ export function useVibeBar() {
     setCustomIngredientInput("")
     setSelectedAlcoholStrength(null)
     setSelectedVibe(null)
+    setSpecialRequests("")
+    setDietaryRestrictions([])
   }
 
   return {
@@ -150,6 +189,8 @@ export function useVibeBar() {
     customIngredientInput,
     selectedAlcoholStrength,
     selectedVibe,
+    dietaryRestrictions,
+    specialRequests,
     toggleIngredient,
     toggleFlavor,
     addCustomIngredient,
@@ -157,6 +198,8 @@ export function useVibeBar() {
     setCustomIngredientInput,
     setAlcoholStrength,
     setVibe,
+    toggleDietaryRestriction,
+    updateSpecialRequests,
     getFormData,
     resetForm,
   }
