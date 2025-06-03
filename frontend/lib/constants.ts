@@ -5,18 +5,6 @@ export const INGREDIENTS = [
   "Tequila",
   "Whiskey",
   "Bourbon",
-  "Lime Juice",
-  "Lemon Juice",
-  "Simple Syrup",
-  "Triple Sec",
-  "Cranberry Juice",
-  "Orange Juice",
-  "Pineapple Juice",
-  "Ginger Beer",
-  "Mint",
-  "Basil",
-  "Rosemary",
-  "Angostura Bitters",
 ] as const
 
 export const FLAVOR_PROFILES = [
