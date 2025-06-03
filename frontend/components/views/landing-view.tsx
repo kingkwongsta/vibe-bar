@@ -84,7 +84,7 @@ export function LandingView({
             </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            AI-powered cocktail recipes tailored to your taste, ingredients, and mood. Discover unique drinks you'll
+            Recipes tailored to your taste, ingredients, and mood. Discover unique drinks you'll
             love.
           </p>
         </div>
@@ -94,14 +94,14 @@ export function LandingView({
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-2xl">
               <Sparkles className="h-6 w-6 text-amber-600" />
-              Generate Your Cocktail
+              Mix Something Amazing
             </CardTitle>
             <CardDescription>Tell us what you have and what you're craving</CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
             {/* Available Ingredients */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">What specific ingredients do you want to include?</Label>
+              <Label className="text-lg font-semibold mb-4 block">What specific ingredients do you want in your recipe?</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {INGREDIENTS.map((ingredient) => (
                   <Badge
@@ -211,7 +211,7 @@ export function LandingView({
               className="w-full bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white py-6 text-lg font-semibold"
             >
               <Zap className="h-5 w-5 mr-2" />
-              Generate My Perfect Cocktail
+              Create Your Cocktail Recipe
             </Button>
           </CardContent>
         </Card>
