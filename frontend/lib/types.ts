@@ -30,6 +30,8 @@ export interface UserPreferences {
   flavorProfiles: string[]
   defaultStrength: string
   dietaryRestrictions: string[]
+  defaultVibe: string
+  preferredVibes: string[]
 }
 
 export interface Vibe {

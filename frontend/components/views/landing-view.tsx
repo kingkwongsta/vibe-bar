@@ -17,11 +17,8 @@ import {
   Plus,
   X,
 } from "lucide-react"
-import { INGREDIENTS, FLAVOR_PROFILES } from "@/lib/constants"
-import type { ViewType } from "@/lib/types"
-
-const ALCOHOL_STRENGTHS = ["Light", "Medium", "Strong", "Non-alcoholic"]
-const VIBES = ["Party", "Relaxing", "Celebration", "Date Night"]
+import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
+import type { ViewType, UserPreferences } from "@/lib/types"
 
 interface LandingViewProps {
   currentView: ViewType
@@ -39,6 +36,7 @@ interface LandingViewProps {
   setCustomIngredientInput: (input: string) => void
   setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
+  userPreferences: UserPreferences
 }
 
 export function LandingView({
@@ -57,6 +55,7 @@ export function LandingView({
   setCustomIngredientInput,
   setAlcoholStrength,
   setVibe,
+  userPreferences,
 }: LandingViewProps) {
   const handleAddCustomIngredient = (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,6 +67,27 @@ export function LandingView({
       e.preventDefault()
       addCustomIngredient()
     }
+  }
+
+  // Function to prepare data for LLM cocktail generation
+  const prepareLLMPrompt = () => {
+    const allIngredients = [...selectedIngredients, ...customIngredients]
+    const prompt = {
+      ingredients: allIngredients.length > 0 ? allIngredients : userPreferences.baseSpirits,
+      flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
+      strength: selectedAlcoholStrength || userPreferences.defaultStrength,
+      vibe: selectedVibe || userPreferences.defaultVibe,
+      dietaryRestrictions: userPreferences.dietaryRestrictions,
+      userContext: {
+        preferredSpirits: userPreferences.baseSpirits,
+        preferredFlavors: userPreferences.flavorProfiles,
+        preferredVibes: userPreferences.preferredVibes,
+        restrictions: userPreferences.dietaryRestrictions
+      }
+    }
+    
+    console.log("LLM Prompt Data:", prompt)
+    return prompt
   }
 
   return (
@@ -207,7 +227,11 @@ export function LandingView({
 
             {/* Generate Button */}
             <Button
-              onClick={() => setCurrentView("recipe")}
+              onClick={() => {
+                const promptData = prepareLLMPrompt()
+                // TODO: Send promptData to LLM API
+                setCurrentView("recipe")
+              }}
               className="w-full bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white py-6 text-lg font-semibold"
             >
               <Zap className="h-5 w-5 mr-2" />

@@ -1,14 +1,12 @@
 "use client"
 
 import { useVibeBar } from "@/hooks/use-vibe-bar"
+import { useUserPreferences } from "@/hooks/use-user-preferences"
 import { LandingView } from "@/components/views/landing-view"
 import { RecipeView } from "@/components/views/recipe-view"
 import { SavedRecipesView } from "@/components/views/saved-recipes-view"
 import { MyBarView } from "@/components/views/my-bar-view"
 import { ProfileView } from "@/components/views/profile-view"
-// Import other views as they're created
-// import { MyBarView } from "@/components/views/my-bar-view"
-// import { ProfileView } from "@/components/views/profile-view"
 
 export default function VibeBarApp() {
   const {
@@ -31,6 +29,8 @@ export default function VibeBarApp() {
     resetForm,
   } = useVibeBar()
 
+  const { preferences } = useUserPreferences()
+
   // Render the appropriate view based on currentView
   switch (currentView) {
     case "landing":
@@ -51,6 +51,7 @@ export default function VibeBarApp() {
           setCustomIngredientInput={setCustomIngredientInput}
           setAlcoholStrength={setAlcoholStrength}
           setVibe={setVibe}
+          userPreferences={preferences}
         />
       )
     
@@ -84,6 +85,7 @@ export default function VibeBarApp() {
           setCustomIngredientInput={setCustomIngredientInput}
           setAlcoholStrength={setAlcoholStrength}
           setVibe={setVibe}
+          userPreferences={preferences}
         />
       )
   }

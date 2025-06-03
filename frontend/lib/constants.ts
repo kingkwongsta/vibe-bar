@@ -64,4 +64,18 @@ export const BAR_TOOLS = [
   "Citrus Juicer",
   "Ice Bucket",
   "Mixing Glass",
+] as const
+
+export const VIBES = [
+  "Party",
+  "Relaxing", 
+  "Celebration",
+  "Date Night",
+] as const
+
+export const ALCOHOL_STRENGTHS = [
+  "Light",
+  "Medium", 
+  "Strong",
+  "Non-alcoholic",
 ] as const 
