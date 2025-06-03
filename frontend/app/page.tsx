@@ -18,11 +18,15 @@ export default function VibeBarApp() {
     selectedFlavors,
     customIngredients,
     customIngredientInput,
+    selectedAlcoholStrength,
+    selectedVibe,
     toggleIngredient,
     toggleFlavor,
     addCustomIngredient,
     removeCustomIngredient,
     setCustomIngredientInput,
+    setAlcoholStrength,
+    setVibe,
     getFormData,
     resetForm,
   } = useVibeBar()
@@ -38,11 +42,15 @@ export default function VibeBarApp() {
           selectedFlavors={selectedFlavors}
           customIngredients={customIngredients}
           customIngredientInput={customIngredientInput}
+          selectedAlcoholStrength={selectedAlcoholStrength}
+          selectedVibe={selectedVibe}
           toggleIngredient={toggleIngredient}
           toggleFlavor={toggleFlavor}
           addCustomIngredient={addCustomIngredient}
           removeCustomIngredient={removeCustomIngredient}
           setCustomIngredientInput={setCustomIngredientInput}
+          setAlcoholStrength={setAlcoholStrength}
+          setVibe={setVibe}
         />
       )
     
@@ -67,11 +75,15 @@ export default function VibeBarApp() {
           selectedFlavors={selectedFlavors}
           customIngredients={customIngredients}
           customIngredientInput={customIngredientInput}
+          selectedAlcoholStrength={selectedAlcoholStrength}
+          selectedVibe={selectedVibe}
           toggleIngredient={toggleIngredient}
           toggleFlavor={toggleFlavor}
           addCustomIngredient={addCustomIngredient}
           removeCustomIngredient={removeCustomIngredient}
           setCustomIngredientInput={setCustomIngredientInput}
+          setAlcoholStrength={setAlcoholStrength}
+          setVibe={setVibe}
         />
       )
   }

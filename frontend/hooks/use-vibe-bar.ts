@@ -9,6 +9,8 @@ export function useVibeBar() {
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([])
   const [customIngredients, setCustomIngredients] = useState<string[]>([])
   const [customIngredientInput, setCustomIngredientInput] = useState("")
+  const [selectedAlcoholStrength, setSelectedAlcoholStrength] = useState<string | null>(null)
+  const [selectedVibe, setSelectedVibe] = useState<string | null>(null)
 
   const toggleIngredient = (ingredient: string) => {
     setSelectedIngredients((prev) =>
@@ -38,6 +40,14 @@ export function useVibeBar() {
     setCustomIngredients((prev) => prev.filter((i) => i !== ingredient))
   }
 
+  const setAlcoholStrength = (strength: string) => {
+    setSelectedAlcoholStrength(strength)
+  }
+
+  const setVibe = (vibe: string) => {
+    setSelectedVibe(vibe)
+  }
+
   const getFormData = (): CocktailFormData => ({
     selectedIngredients: [...selectedIngredients, ...customIngredients],
     selectedFlavors,
@@ -49,6 +59,8 @@ export function useVibeBar() {
     setSelectedFlavors([])
     setCustomIngredients([])
     setCustomIngredientInput("")
+    setSelectedAlcoholStrength(null)
+    setSelectedVibe(null)
   }
 
   return {
@@ -58,11 +70,15 @@ export function useVibeBar() {
     selectedFlavors,
     customIngredients,
     customIngredientInput,
+    selectedAlcoholStrength,
+    selectedVibe,
     toggleIngredient,
     toggleFlavor,
     addCustomIngredient,
     removeCustomIngredient,
     setCustomIngredientInput,
+    setAlcoholStrength,
+    setVibe,
     getFormData,
     resetForm,
   }
