@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import {
@@ -13,6 +14,8 @@ import {
   Users,
   Star,
   Zap,
+  Plus,
+  X,
 } from "lucide-react"
 import { INGREDIENTS, FLAVOR_PROFILES } from "@/lib/constants"
 import type { ViewType } from "@/lib/types"
@@ -22,8 +25,13 @@ interface LandingViewProps {
   setCurrentView: (view: ViewType) => void
   selectedIngredients: string[]
   selectedFlavors: string[]
+  customIngredients: string[]
+  customIngredientInput: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
+  addCustomIngredient: () => void
+  removeCustomIngredient: (ingredient: string) => void
+  setCustomIngredientInput: (input: string) => void
 }
 
 export function LandingView({
@@ -31,9 +39,26 @@ export function LandingView({
   setCurrentView,
   selectedIngredients,
   selectedFlavors,
+  customIngredients,
+  customIngredientInput,
   toggleIngredient,
   toggleFlavor,
+  addCustomIngredient,
+  removeCustomIngredient,
+  setCustomIngredientInput,
 }: LandingViewProps) {
+  const handleAddCustomIngredient = (e: React.FormEvent) => {
+    e.preventDefault()
+    addCustomIngredient()
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      addCustomIngredient()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
@@ -82,6 +107,52 @@ export function LandingView({
                   </Badge>
                 ))}
               </div>
+            </div>
+
+            {/* Custom Ingredients Section */}
+            <div>
+              <Label className="text-lg font-semibold mb-4 block">Don't see what you have? Add your own</Label>
+              
+              {/* Custom Ingredient Input */}
+              <form onSubmit={handleAddCustomIngredient} className="flex gap-2 mb-4">
+                <Input
+                  type="text"
+                  placeholder="e.g., Aperol, Elderflower Liqueur, Prosecco..."
+                  value={customIngredientInput}
+                  onChange={(e) => setCustomIngredientInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1"
+                />
+                <Button 
+                  type="submit" 
+                  variant="outline" 
+                  size="sm"
+                  disabled={!customIngredientInput.trim()}
+                  className="px-4"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </form>
+
+              {/* Display Custom Ingredients */}
+              {customIngredients.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {customIngredients.map((ingredient) => (
+                    <Badge
+                      key={ingredient}
+                      variant="secondary"
+                      className="cursor-pointer p-2 text-center justify-center transition-all bg-green-100 hover:bg-green-200 border-green-300 text-green-800 group"
+                    >
+                      {ingredient}
+                      <X 
+                        className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" 
+                        onClick={() => removeCustomIngredient(ingredient)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Flavor Preferences */}

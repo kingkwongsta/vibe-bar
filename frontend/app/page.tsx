@@ -16,8 +16,13 @@ export default function VibeBarApp() {
     setCurrentView,
     selectedIngredients,
     selectedFlavors,
+    customIngredients,
+    customIngredientInput,
     toggleIngredient,
     toggleFlavor,
+    addCustomIngredient,
+    removeCustomIngredient,
+    setCustomIngredientInput,
     getFormData,
     resetForm,
   } = useVibeBar()
@@ -31,8 +36,13 @@ export default function VibeBarApp() {
           setCurrentView={setCurrentView}
           selectedIngredients={selectedIngredients}
           selectedFlavors={selectedFlavors}
+          customIngredients={customIngredients}
+          customIngredientInput={customIngredientInput}
           toggleIngredient={toggleIngredient}
           toggleFlavor={toggleFlavor}
+          addCustomIngredient={addCustomIngredient}
+          removeCustomIngredient={removeCustomIngredient}
+          setCustomIngredientInput={setCustomIngredientInput}
         />
       )
     
@@ -55,8 +65,13 @@ export default function VibeBarApp() {
           setCurrentView={setCurrentView}
           selectedIngredients={selectedIngredients}
           selectedFlavors={selectedFlavors}
+          customIngredients={customIngredients}
+          customIngredientInput={customIngredientInput}
           toggleIngredient={toggleIngredient}
           toggleFlavor={toggleFlavor}
+          addCustomIngredient={addCustomIngredient}
+          removeCustomIngredient={removeCustomIngredient}
+          setCustomIngredientInput={setCustomIngredientInput}
         />
       )
   }

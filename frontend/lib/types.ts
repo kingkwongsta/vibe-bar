@@ -11,6 +11,7 @@ export interface Recipe {
 export interface CocktailFormData {
   selectedIngredients: string[]
   selectedFlavors: string[]
+  customIngredients?: string[]
   strength?: string
   occasion?: string
   difficulty?: string
