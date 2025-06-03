@@ -90,7 +90,7 @@ export function LandingView({
           <CardContent className="space-y-8">
             {/* Available Ingredients */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">What's in your bar?</Label>
+              <Label className="text-lg font-semibold mb-4 block">What specific ingredients do you want to include?</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {INGREDIENTS.map((ingredient) => (
                   <Badge
@@ -123,7 +123,7 @@ export function LandingView({
 
             {/* Flavor Preferences */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">Flavor vibes you're feeling</Label>
+              <Label className="text-lg font-semibold mb-4 block">What kind of flavor profile?</Label>
               <div className="flex flex-wrap gap-2">
                 {FLAVOR_PROFILES.map((flavor) => (
                   <Badge
@@ -145,7 +145,7 @@ export function LandingView({
             {/* Quick Options */}
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <Label className="text-sm font-medium mb-2 block">Strength</Label>
+                <Label className="text-sm font-medium mb-2 block">Alchohol Strength</Label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Medium" />
@@ -160,7 +160,7 @@ export function LandingView({
               </div>
 
               <div>
-                <Label className="text-sm font-medium mb-2 block">Occasion</Label>
+                <Label className="text-sm font-medium mb-2 block">Vibe</Label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Relaxing" />
