@@ -25,8 +25,31 @@ export function DevLogger() {
     return null
   }
 
+  // Load initial logs and subscribe to new ones
+  useEffect(() => {
+    // Load existing logs
+    setLogs(logger.getLogHistory())
+    
+    // Subscribe to new logs
+    const handleNewLog = (entry: LogEntry) => {
+      setLogs(prevLogs => {
+        const newLogs = [...prevLogs, entry]
+        // Keep only last 50 logs to prevent memory issues
+        return newLogs.slice(-50)
+      })
+    }
+    
+    logger.onNewLog = handleNewLog
+    
+    // Cleanup subscription on unmount
+    return () => {
+      logger.onNewLog = undefined
+    }
+  }, [])
+
   const clearLogs = () => {
     setLogs([])
+    logger.clearLogHistory()
     console.clear()
   }
 

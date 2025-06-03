@@ -13,6 +13,8 @@ interface LogEntry {
 class Logger {
   private sessionId: string
   private isDev: boolean
+  private logHistory: LogEntry[] = []
+  private maxHistorySize: number = 50
 
   constructor() {
     this.sessionId = this.generateSessionId()
@@ -72,6 +74,15 @@ class Logger {
   private log(level: LogLevel, category: string, action: string, data?: any, userId?: string) {
     const entry = this.createLogEntry(level, category, action, data, userId)
     
+    // Add to history (keep only last N entries)
+    this.logHistory.push(entry)
+    if (this.logHistory.length > this.maxHistorySize) {
+      this.logHistory = this.logHistory.slice(-this.maxHistorySize)
+    }
+    
+    // Notify subscribers of new log
+    this.notifyNewLog(entry)
+    
     // Always log to console in development
     if (this.isDev) {
       const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'
@@ -98,6 +109,24 @@ class Logger {
   // Method to manually trigger a log from dev tools
   debug(message: string, data?: any) {
     this.log('debug', 'manual', message, data)
+  }
+
+  // Methods for DevLogger to access log history
+  getLogHistory(): LogEntry[] {
+    return [...this.logHistory]
+  }
+
+  clearLogHistory() {
+    this.logHistory = []
+  }
+
+  // Method to subscribe to new logs
+  onNewLog?: (entry: LogEntry) => void
+
+  private notifyNewLog(entry: LogEntry) {
+    if (this.onNewLog) {
+      this.onNewLog(entry)
+    }
   }
 }
 
