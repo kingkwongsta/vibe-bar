@@ -2,8 +2,8 @@
 
 import { useVibeBar } from "@/hooks/use-vibe-bar"
 import { LandingView } from "@/components/views/landing-view"
+import { RecipeView } from "@/components/views/recipe-view"
 // Import other views as they're created
-// import { RecipeView } from "@/components/views/recipe-view"
 // import { SavedRecipesView } from "@/components/views/saved-recipes-view"
 // import { MyBarView } from "@/components/views/my-bar-view"
 // import { ProfileView } from "@/components/views/profile-view"
@@ -35,8 +35,7 @@ export default function VibeBarApp() {
       )
     
     case "recipe":
-      return <div>Recipe View - To be created</div>
-      // return <RecipeView currentView={currentView} setCurrentView={setCurrentView} />
+      return <RecipeView currentView={currentView} setCurrentView={setCurrentView} />
     
     case "saved":
       return <div>Saved Recipes View - To be created</div>
