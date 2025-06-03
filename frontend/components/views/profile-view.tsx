@@ -101,7 +101,7 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-1 gap-4">
                   <div>
                     <Label className="text-sm font-medium mb-2 block">Default Strength</Label>
                     <Select defaultValue="medium">
@@ -112,19 +112,6 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                         <SelectItem value="light">Light</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="strong">Strong</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">Preferred Difficulty</Label>
-                    <Select defaultValue="easy">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="easy">Easy</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="hard">Hard</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

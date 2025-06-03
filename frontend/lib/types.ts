@@ -3,7 +3,6 @@ export interface Recipe {
   name: string
   rating: number
   ingredients: string[]
-  difficulty: "Easy" | "Medium" | "Hard"
   time: string
   description?: string
 }
@@ -11,9 +10,9 @@ export interface Recipe {
 export interface CocktailFormData {
   selectedIngredients: string[]
   selectedFlavors: string[]
+  customIngredients?: string[]
   strength?: string
   occasion?: string
-  difficulty?: string
   specialRequests?: string
 }
 
@@ -30,6 +29,5 @@ export interface UserPreferences {
   baseSpirits: string[]
   flavorProfiles: string[]
   defaultStrength: string
-  preferredDifficulty: string
   dietaryRestrictions: string[]
 } 
