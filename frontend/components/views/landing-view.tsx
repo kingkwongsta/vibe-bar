@@ -111,13 +111,11 @@ export function LandingView({
 
             {/* Custom Ingredients Section */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">Don't see what you have? Add your own</Label>
-              
               {/* Custom Ingredient Input */}
               <form onSubmit={handleAddCustomIngredient} className="flex gap-2 mb-4">
                 <Input
                   type="text"
-                  placeholder="e.g., Aperol, Elderflower Liqueur, Prosecco..."
+                  placeholder="Add custom ingredients (e.g., Aperol, Elderflower Liqueur, Prosecco...)"
                   value={customIngredientInput}
                   onChange={(e) => setCustomIngredientInput(e.target.value)}
                   onKeyPress={handleKeyPress}
