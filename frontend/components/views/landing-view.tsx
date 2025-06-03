@@ -112,25 +112,36 @@ export function LandingView({
             {/* Custom Ingredients Section */}
             <div>
               {/* Custom Ingredient Input */}
-              <form onSubmit={handleAddCustomIngredient} className="flex gap-2 mb-4">
+              <form onSubmit={handleAddCustomIngredient} className="mb-4">
                 <Input
                   type="text"
-                  placeholder="Add custom ingredients (e.g., Aperol, Elderflower Liqueur, Prosecco...)"
+                  placeholder="Add custom ingredients (e.g., Aperol, Elderflower Liqueur, Prosecco...) - separate with commas"
                   value={customIngredientInput}
-                  onChange={(e) => setCustomIngredientInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="flex-1"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.endsWith(',')) {
+                      // Remove the comma and add the ingredient
+                      const ingredient = value.slice(0, -1).trim();
+                      if (ingredient) {
+                        setCustomIngredientInput('');
+                        // Simulate adding the ingredient by calling the existing function
+                        const tempInput = customIngredientInput;
+                        setCustomIngredientInput(ingredient);
+                        setTimeout(() => {
+                          addCustomIngredient();
+                        }, 0);
+                      }
+                    } else {
+                      setCustomIngredientInput(value);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (customIngredientInput.trim()) {
+                      addCustomIngredient();
+                    }
+                  }}
+                  className="w-full"
                 />
-                <Button 
-                  type="submit" 
-                  variant="outline" 
-                  size="sm"
-                  disabled={!customIngredientInput.trim()}
-                  className="px-4"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add
-                </Button>
               </form>
 
               {/* Display Custom Ingredients */}
