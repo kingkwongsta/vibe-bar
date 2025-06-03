@@ -215,25 +215,6 @@ export function LandingView({
             </Button>
           </CardContent>
         </Card>
-
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
-          <Card className="text-center p-6 bg-white/60 backdrop-blur-sm border-0">
-            <ChefHat className="h-8 w-8 text-amber-600 mx-auto mb-2" />
-            <h3 className="font-semibold text-lg">10,000+</h3>
-            <p className="text-gray-600">Unique recipes generated</p>
-          </Card>
-          <Card className="text-center p-6 bg-white/60 backdrop-blur-sm border-0">
-            <Users className="h-8 w-8 text-orange-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-lg">5,000+</h3>
-            <p className="text-gray-600">Happy home bartenders</p>
-          </Card>
-          <Card className="text-center p-6 bg-white/60 backdrop-blur-sm border-0">
-            <Star className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-lg">4.9/5</h3>
-            <p className="text-gray-600">Average recipe rating</p>
-          </Card>
-        </div>
       </div>
     </div>
   )
