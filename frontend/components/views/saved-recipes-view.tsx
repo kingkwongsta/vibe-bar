@@ -27,7 +27,6 @@ const savedRecipes = [
     id: 1,
     name: "Sunset Serenity",
     rating: 5,
-    difficulty: "Easy",
     time: "3 min",
     ingredients: ["Tequila", "Pineapple", "Lime", "Jalapeño"]
   },
@@ -35,7 +34,6 @@ const savedRecipes = [
     id: 2,
     name: "Midnight Manhattan",
     rating: 4,
-    difficulty: "Medium",
     time: "5 min",
     ingredients: ["Whiskey", "Vermouth", "Bitters", "Cherry"]
   },
@@ -43,7 +41,6 @@ const savedRecipes = [
     id: 3,
     name: "Tropical Storm",
     rating: 5,
-    difficulty: "Easy",
     time: "4 min",
     ingredients: ["Rum", "Coconut", "Mango", "Lime"]
   },
@@ -51,7 +48,6 @@ const savedRecipes = [
     id: 4,
     name: "Smoky Old Soul",
     rating: 4,
-    difficulty: "Hard",
     time: "8 min",
     ingredients: ["Bourbon", "Maple", "Orange", "Rosemary"]
   },
@@ -59,7 +55,6 @@ const savedRecipes = [
     id: 5,
     name: "Garden Gimlet",
     rating: 3,
-    difficulty: "Medium",
     time: "6 min",
     ingredients: ["Gin", "Cucumber", "Basil", "Lime"]
   },
@@ -67,7 +62,6 @@ const savedRecipes = [
     id: 6,
     name: "Spiced Pear Fizz",
     rating: 5,
-    difficulty: "Easy",
     time: "4 min",
     ingredients: ["Vodka", "Pear", "Cinnamon", "Ginger"]
   }
@@ -129,9 +123,6 @@ export function SavedRecipesView({ currentView, setCurrentView }: SavedRecipesVi
                   </div>
                 </div>
                 <div className="flex gap-2 text-xs text-gray-600">
-                  <Badge variant="outline" className="text-xs">
-                    {recipe.difficulty}
-                  </Badge>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {recipe.time}

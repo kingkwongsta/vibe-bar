@@ -28,9 +28,6 @@ export function RecipeCard({ recipe, onViewRecipe, onShare }: RecipeCardProps) {
           </div>
         </div>
         <div className="flex gap-2 text-xs text-gray-600">
-          <Badge variant="outline" className="text-xs">
-            {recipe.difficulty}
-          </Badge>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {recipe.time}

@@ -6,7 +6,6 @@ export const SAVED_RECIPES: Recipe[] = [
     name: "Sunset Serenity",
     rating: 5,
     ingredients: ["Tequila", "Pineapple Juice", "Lime", "Jalapeño"],
-    difficulty: "Easy",
     time: "3 min",
   },
   {
@@ -14,7 +13,6 @@ export const SAVED_RECIPES: Recipe[] = [
     name: "Garden Whisper",
     rating: 4,
     ingredients: ["Gin", "Cucumber", "Basil", "Lime"],
-    difficulty: "Medium",
     time: "5 min",
   },
   {
@@ -22,7 +20,6 @@ export const SAVED_RECIPES: Recipe[] = [
     name: "Midnight Velvet",
     rating: 5,
     ingredients: ["Bourbon", "Blackberry", "Lemon", "Thyme"],
-    difficulty: "Hard",
     time: "8 min",
   },
 ] 

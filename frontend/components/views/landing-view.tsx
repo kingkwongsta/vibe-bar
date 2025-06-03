@@ -20,6 +20,9 @@ import {
 import { INGREDIENTS, FLAVOR_PROFILES } from "@/lib/constants"
 import type { ViewType } from "@/lib/types"
 
+const ALCOHOL_STRENGTHS = ["Light", "Medium", "Strong", "Non-alcoholic"]
+const VIBES = ["Party", "Relaxing", "Celebration", "Date Night"]
+
 interface LandingViewProps {
   currentView: ViewType
   setCurrentView: (view: ViewType) => void
@@ -27,11 +30,15 @@ interface LandingViewProps {
   selectedFlavors: string[]
   customIngredients: string[]
   customIngredientInput: string
+  selectedAlcoholStrength: string | null
+  selectedVibe: string | null
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
   addCustomIngredient: () => void
   removeCustomIngredient: (ingredient: string) => void
   setCustomIngredientInput: (input: string) => void
+  setAlcoholStrength: (strength: string) => void
+  setVibe: (vibe: string) => void
 }
 
 export function LandingView({
@@ -41,11 +48,15 @@ export function LandingView({
   selectedFlavors,
   customIngredients,
   customIngredientInput,
+  selectedAlcoholStrength,
+  selectedVibe,
   toggleIngredient,
   toggleFlavor,
   addCustomIngredient,
   removeCustomIngredient,
   setCustomIngredientInput,
+  setAlcoholStrength,
+  setVibe,
 }: LandingViewProps) {
   const handleAddCustomIngredient = (e: React.FormEvent) => {
     e.preventDefault()
@@ -143,49 +154,45 @@ export function LandingView({
             </div>
 
             {/* Quick Options */}
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <Label className="text-sm font-medium mb-2 block">Alchohol Strength</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Medium" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="strong">Strong</SelectItem>
-                    <SelectItem value="mocktail">Non-alcoholic</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="text-lg font-semibold mb-4 block">Alcohol Strength</Label>
+                <div className="flex flex-wrap gap-2">
+                  {ALCOHOL_STRENGTHS.map((strength) => (
+                    <Badge
+                      key={strength}
+                      variant={selectedAlcoholStrength === strength ? "default" : "outline"}
+                      className={`cursor-pointer p-2 transition-all ${
+                        selectedAlcoholStrength === strength
+                          ? "bg-purple-600 hover:bg-purple-700"
+                          : "hover:bg-purple-50 hover:border-purple-300"
+                      }`}
+                      onClick={() => setAlcoholStrength(strength)}
+                    >
+                      {strength}
+                    </Badge>
+                  ))}
+                </div>
               </div>
 
               <div>
-                <Label className="text-sm font-medium mb-2 block">Vibe</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Relaxing" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="party">Party</SelectItem>
-                    <SelectItem value="relaxing">Relaxing</SelectItem>
-                    <SelectItem value="celebration">Celebration</SelectItem>
-                    <SelectItem value="date">Date Night</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium mb-2 block">Difficulty</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="text-lg font-semibold mb-4 block">Vibe</Label>
+                <div className="flex flex-wrap gap-2">
+                  {VIBES.map((vibe) => (
+                    <Badge
+                      key={vibe}
+                      variant={selectedVibe === vibe ? "default" : "outline"}
+                      className={`cursor-pointer p-2 transition-all ${
+                        selectedVibe === vibe
+                          ? "bg-blue-600 hover:bg-blue-700"
+                          : "hover:bg-blue-50 hover:border-blue-300"
+                      }`}
+                      onClick={() => setVibe(vibe)}
+                    >
+                      {vibe}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
 
