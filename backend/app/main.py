@@ -2,16 +2,18 @@
 from fastapi import FastAPI, HTTPException, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, UTC
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional
 import logging
 import asyncio
 import uvicorn
 
 # Import models and services
 from app.models import (
-    APIResponse, HealthCheck
+    APIResponse, HealthCheck, DrinkGenerationRequest, DrinkRecipeResponse,
+    DrinkCustomizationRequest, DrinkRecommendationRequest, DrinkFeedback,
+    DrinkType, FlavorProfile, MoodCategory, Difficulty
 )
-from app.services.openrouter import OpenRouterService, OpenRouterError, get_openrouter_service
+from app.services import get_openrouter_service, get_drink_service, OpenRouterError
 from app.config import config
 
 # Set up logging
@@ -20,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 # Create FastAPI app
 app = FastAPI(
-    title="Vibe Bar API",
-    description="Backend API for Vibe Bar - AI-Powered Assistant",
-    version="1.0.0",
+    title="Vibe Bar API - Drink Recipe Generator",
+    description="AI-Powered Drink Recipe Generation using OpenRouter LLM",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -41,12 +43,19 @@ app.add_middleware(
 async def root():
     """Root endpoint returning API information"""
     return APIResponse(
-        message="Welcome to Vibe Bar API",
+        message="Welcome to Vibe Bar - AI Drink Recipe Generator",
         data={
-            "api_name": "Vibe Bar",
-            "version": "1.0.0",
-            "description": "AI-Powered Assistant API",
-            "docs_url": "/docs"
+            "api_name": "Vibe Bar Drink Recipe Generator",
+            "version": "2.0.0",
+            "description": "AI-Powered Drink Recipe Generation using OpenRouter LLM",
+            "docs_url": "/docs",
+            "features": [
+                "Generate custom drink recipes based on mood and preferences",
+                "Customize existing recipes",
+                "Get personalized recommendations",
+                "Food pairing suggestions",
+                "Multiple drink types: cocktails, mocktails, coffee, tea, smoothies"
+            ]
         }
     )
 
@@ -57,8 +66,8 @@ async def health_check():
     return HealthCheck(
         status="healthy",
         timestamp=datetime.now(UTC),
-        service="vibe-bar-api",
-        version="1.0.0"
+        service="vibe-bar-drink-api",
+        version="2.0.0"
     )
 
 # Configuration endpoint for debugging (development only)
@@ -92,20 +101,23 @@ async def get_config_status():
 async def test_endpoint():
     """Test endpoint to verify frontend can reach backend"""
     return APIResponse(
-        message="Backend is reachable from frontend!",
+        message="Backend is reachable and focused on drink recipe generation!",
         data={
             "timestamp": datetime.now(UTC).isoformat(),
             "cors_working": True,
-            "models_loaded": True,
-            "ai_service_available": config.validate_openrouter_config()
+            "drink_service_available": True,
+            "ai_service_available": config.validate_openrouter_config(),
+            "supported_drink_types": [dt.value for dt in DrinkType],
+            "supported_moods": [mood.value for mood in MoodCategory]
         }
     )
 
-# OpenRouter AI endpoints
+# OpenRouter AI health check
 @app.get("/api/ai/health", response_model=APIResponse)
-async def ai_health_check(ai_service: OpenRouterService = Depends(get_openrouter_service)):
+async def ai_health_check():
     """Check the health of the AI service"""
     try:
+        ai_service = get_openrouter_service()
         health_status = await ai_service.health_check()
         return APIResponse(
             message="AI service health check completed",
@@ -115,106 +127,182 @@ async def ai_health_check(ai_service: OpenRouterService = Depends(get_openrouter
         logger.error(f"AI health check failed: {e}")
         raise HTTPException(status_code=503, detail=f"AI service unavailable: {str(e)}")
 
-@app.get("/api/ai/models", response_model=APIResponse)
-async def get_available_models(ai_service: OpenRouterService = Depends(get_openrouter_service)):
-    """Get list of available AI models"""
-    try:
-        models = await ai_service.get_available_models()
-        return APIResponse(
-            message="Available models retrieved",
-            data={"models": models}
-        )
-    except Exception as e:
-        logger.error(f"Failed to get models: {e}")
-        raise HTTPException(status_code=503, detail=f"Failed to retrieve models: {str(e)}")
+# =============================================================================
+# DRINK RECIPE GENERATION ENDPOINTS
+# =============================================================================
 
-@app.post("/api/ai/complete", response_model=APIResponse)
-async def ai_complete(
-    request: Dict[str, Any] = Body(
-        openapi_examples={
-            "test_request": {
-                "summary": "Quick test request",
-                "description": "Simple test message to verify API functionality",
-                "value": {
-                    "messages": "Hello! Can you tell me a fun fact?",
-                    "temperature": 0.7,
-                    "max_tokens": 100
-                }
-            },
-            "simple_message": {
-                "summary": "Simple text message",
-                "description": "Basic AI completion with a simple text prompt",
-                "value": {
-                    "messages": "Hello! Tell me something uplifting and motivational.",
-                    "temperature": 0.7,
-                    "max_tokens": 150
-                }
-            },
-            "structured_conversation": {
-                "summary": "Structured conversation with system prompt",
-                "description": "Multi-message conversation with system and user roles",
-                "value": {
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": "You are a helpful AI assistant."
-                        },
-                        {
-                            "role": "user",
-                            "content": "Can you help me brainstorm ideas for a creative project?"
-                        }
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 250
-                }
-            },
-            "advice_request": {
-                "summary": "General advice request",
-                "description": "Ask AI for practical advice or recommendations",
-                "value": {
-                    "messages": "I'm looking for some productivity tips to help me stay focused while working from home. What would you recommend?",
-                    "temperature": 0.5,
-                    "max_tokens": 200
-                }
-            }
-        }
-    ),
-    ai_service: OpenRouterService = Depends(get_openrouter_service)
+@app.post("/api/drinks/generate", response_model=APIResponse)
+async def generate_drink_recipe(
+    request: DrinkGenerationRequest,
+    drink_service = Depends(get_drink_service)
 ):
-    """General AI completion endpoint with example requests"""
+    """Generate a new drink recipe based on user preferences and mood"""
     try:
-        # Extract parameters from request
-        messages = request.get("messages", "")
-        model = request.get("model")
-        temperature = request.get("temperature")
-        max_tokens = request.get("max_tokens")
+        logger.info(f"Generating drink recipe for mood: {request.mood}, type: {request.drink_type}")
         
-        if not messages:
-            raise HTTPException(status_code=400, detail="Messages are required")
-        
-        response = await ai_service.complete(
-            messages=messages,
-            model=model,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
+        recipe_response = await drink_service.generate_drink_recipe(request)
         
         return APIResponse(
-            message="AI completion successful",
+            message="Drink recipe generated successfully",
             data={
-                "response": response.content,
-                "model_used": response.model_used,
-                "tokens_used": response.tokens_used,
-                "response_time": response.response_time,
-                "created_at": response.created_at.isoformat()
+                "recipe": recipe_response.recipe.model_dump(),
+                "ai_explanation": recipe_response.ai_explanation,
+                "alternative_suggestions": recipe_response.alternative_suggestions,
+                "pairing_suggestions": recipe_response.pairing_suggestions
             }
         )
         
     except OpenRouterError as e:
-        logger.error(f"OpenRouter error: {e}")
+        logger.error(f"OpenRouter error in drink generation: {e}")
         raise HTTPException(status_code=503, detail=f"AI service error: {str(e)}")
     except Exception as e:
-        logger.error(f"Unexpected error in AI completion: {e}")
+        logger.error(f"Unexpected error in drink generation: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+@app.post("/api/drinks/customize", response_model=APIResponse)
+async def customize_drink_recipe(
+    request: DrinkCustomizationRequest,
+    drink_service = Depends(get_drink_service)
+):
+    """Customize an existing drink recipe"""
+    try:
+        # Note: In a real app, you'd fetch the base recipe from a database
+        # For now, this is a placeholder - you'd need to implement recipe storage
+        raise HTTPException(
+            status_code=501, 
+            detail="Recipe customization requires a database to store base recipes. This will be implemented when adding persistence."
+        )
+        
+    except Exception as e:
+        logger.error(f"Error in drink customization: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+@app.post("/api/drinks/recommendations", response_model=APIResponse)
+async def get_drink_recommendations(
+    request: DrinkRecommendationRequest,
+    drink_service = Depends(get_drink_service)
+):
+    """Get personalized drink recommendations"""
+    try:
+        logger.info(f"Getting drink recommendations for user preferences")
+        
+        recommendations = await drink_service.get_drink_recommendations(request)
+        
+        return APIResponse(
+            message=f"Generated {len(recommendations)} drink recommendations",
+            data={
+                "recommendations": [
+                    {
+                        "recipe": rec.recipe.model_dump(),
+                        "ai_explanation": rec.ai_explanation,
+                        "alternative_suggestions": rec.alternative_suggestions,
+                        "pairing_suggestions": rec.pairing_suggestions
+                    }
+                    for rec in recommendations
+                ]
+            }
+        )
+        
+    except OpenRouterError as e:
+        logger.error(f"OpenRouter error in recommendations: {e}")
+        raise HTTPException(status_code=503, detail=f"AI service error: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error in recommendations: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+# =============================================================================
+# HELPER ENDPOINTS FOR FRONTEND
+# =============================================================================
+
+@app.get("/api/drinks/options", response_model=APIResponse)
+async def get_drink_options():
+    """Get available options for drink generation (types, flavors, moods, etc.)"""
+    return APIResponse(
+        message="Drink generation options retrieved",
+        data={
+            "drink_types": {
+                "options": [{"value": dt.value, "label": dt.value.replace('_', ' ').title()} for dt in DrinkType],
+                "description": "Types of drinks that can be generated"
+            },
+            "flavor_profiles": {
+                "options": [{"value": fp.value, "label": fp.value.title()} for fp in FlavorProfile],
+                "description": "Flavor profiles to choose from"
+            },
+            "mood_categories": {
+                "options": [{"value": mood.value, "label": mood.value.title()} for mood in MoodCategory],
+                "description": "Mood categories that influence drink recommendations"
+            },
+            "difficulty_levels": {
+                "options": [{"value": diff.value, "label": diff.value.title()} for diff in Difficulty],
+                "description": "Difficulty levels for drink preparation"
+            },
+            "time_of_day_options": [
+                "morning", "afternoon", "evening", "night", "late night"
+            ],
+            "temperature_preferences": [
+                "hot", "cold", "room temperature"
+            ]
+        }
+    )
+
+@app.post("/api/drinks/quick-generate", response_model=APIResponse)
+async def quick_generate_drink(
+    request: Dict[str, Any] = Body(
+        openapi_examples={
+            "energizing_morning": {
+                "summary": "Energizing morning drink",
+                "description": "Generate an energizing drink for morning",
+                "value": {
+                    "mood": "energizing",
+                    "time_of_day": "morning",
+                    "custom_request": "I need something to wake me up and start my day right"
+                }
+            },
+            "relaxing_evening": {
+                "summary": "Relaxing evening drink",
+                "description": "Generate a relaxing drink for evening",
+                "value": {
+                    "mood": "relaxing",
+                    "time_of_day": "evening",
+                    "drink_type": "tea",
+                    "custom_request": "Help me unwind after a long day"
+                }
+            },
+            "celebratory_cocktail": {
+                "summary": "Celebratory cocktail",
+                "description": "Generate a festive cocktail for celebration",
+                "value": {
+                    "mood": "celebratory",
+                    "drink_type": "cocktail",
+                    "flavor_preferences": ["fruity", "sweet"],
+                    "custom_request": "Something special for a celebration"
+                }
+            }
+        }
+    ),
+    drink_service = Depends(get_drink_service)
+):
+    """Quick drink generation with simplified input"""
+    try:
+        # Convert dict to DrinkGenerationRequest
+        generation_request = DrinkGenerationRequest(**request)
+        
+        recipe_response = await drink_service.generate_drink_recipe(generation_request)
+        
+        return APIResponse(
+            message="Quick drink recipe generated successfully",
+            data={
+                "recipe": recipe_response.recipe.model_dump(),
+                "ai_explanation": recipe_response.ai_explanation,
+                "alternative_suggestions": recipe_response.alternative_suggestions
+            }
+        )
+        
+    except OpenRouterError as e:
+        logger.error(f"OpenRouter error in quick generation: {e}")
+        raise HTTPException(status_code=503, detail=f"AI service error: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error in quick generation: {e}")
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
 if __name__ == "__main__":
