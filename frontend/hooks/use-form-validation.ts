@@ -80,7 +80,7 @@ export function useFormValidation() {
   const validateRecipeGenerationInput = useCallback((formData: {
     selectedIngredients: string[]
     selectedFlavors: string[]
-    customIngredients: string[]
+    customIngredients?: string
   }): ValidationResult => {
     setIsValidating(true)
     clearError('recipeGeneration')

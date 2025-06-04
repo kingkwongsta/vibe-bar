@@ -70,34 +70,12 @@ export function LandingView({
   isFormRestored = false,
 }: LandingViewProps) {
   const {
-    validateCustomIngredientInput,
     validateSpecialRequestsInput,
     validateSelectionLimitsInput,
     validateRecipeGenerationInput,
     getError,
     clearError,
   } = useFormValidation()
-
-  const handleAddCustomIngredient = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    const validation = validateCustomIngredientInput(
-      customIngredientInput,
-      selectedIngredients,
-      customIngredients
-    )
-    
-    if (validation.isValid) {
-      addCustomIngredient()
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleAddCustomIngredient(e)
-    }
-  }
 
   const handleSpecialRequestsChange = (requests: string) => {
     const validation = validateSpecialRequestsInput(requests)
@@ -106,6 +84,16 @@ export function LandingView({
     } else {
       updateSpecialRequests(requests) // Allow typing but show error
     }
+  }
+
+  const handleCustomIngredientsChange = (ingredients: string) => {
+    clearError('customIngredient')
+    const validation = validateSpecialRequestsInput(ingredients) // Use same validation pattern as special requests
+    if (!validation.isValid && validation.error) {
+      // Set custom ingredient error instead of special requests error
+      // We'll handle this through the validation directly
+    }
+    setCustomIngredientInput(ingredients) // Allow typing and let validation show errors
   }
 
   const handleIngredientToggle = (ingredient: string) => {
@@ -139,7 +127,7 @@ export function LandingView({
     const validation = validateRecipeGenerationInput({
       selectedIngredients,
       selectedFlavors,
-      customIngredients,
+      customIngredients: customIngredientInput.trim() || undefined,
     })
     
     if (!validation.isValid) {
@@ -151,13 +139,13 @@ export function LandingView({
     }
     
     // Fallback to original logic if callback not provided
-    const allIngredients = [...selectedIngredients, ...customIngredients]
     const prompt = {
-      ingredients: allIngredients.length > 0 ? allIngredients : userPreferences.baseSpirits,
+      ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
       flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
       strength: selectedAlcoholStrength || userPreferences.defaultStrength,
       vibe: selectedVibe || userPreferences.defaultVibe,
       dietaryRestrictions: userPreferences.dietaryRestrictions,
+      customIngredients: customIngredientInput.trim() || undefined,
       specialRequests: specialRequests.trim() || undefined,
       userContext: {
         preferredSpirits: userPreferences.baseSpirits,
@@ -252,71 +240,29 @@ export function LandingView({
 
             {/* Custom Ingredients Section */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">
-                Add custom ingredients
-                {customIngredients.length > 0 && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    ({customIngredients.length} added)
-                  </span>
-                )}
-              </Label>
-              
-              {/* Custom Ingredient Input */}
+              <Label className="text-lg font-semibold mb-4 block">Add custom ingredients</Label>
               <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="e.g., Aperol, Elderflower Liqueur"
-                    value={customIngredientInput}
-                    onChange={(e) => {
-                      setCustomIngredientInput(e.target.value)
-                      if (getError('customIngredient')) {
-                        clearError('customIngredient')
-                      }
-                    }}
-                    onKeyPress={handleKeyPress}
-                    className={`flex-1 ${getError('customIngredient') ? 'border-red-500' : ''}`}
-                  />
-                  <Button
-                    type="button"
-                    onClick={handleAddCustomIngredient}
-                    size="sm"
-                    className="bg-amber-600 hover:bg-amber-700"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                <Textarea
+                  placeholder="e.g., Aperol, Elderflower Liqueur, Angostura Bitters"
+                  value={customIngredientInput}
+                  onChange={(e) => handleCustomIngredientsChange(e.target.value)}
+                  className={`min-h-[100px] resize-none ${getError('customIngredient') ? 'border-red-500' : ''}`}
+                  maxLength={300}
+                />
+                <div className="flex justify-between items-center">
+                  {getError('customIngredient') ? (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {getError('customIngredient')}
+                    </p>
+                  ) : (
+                    <div />
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {customIngredientInput.length}/300
+                  </span>
                 </div>
-                
-                {getError('customIngredient') && (
-                  <p className="text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {getError('customIngredient')}
-                  </p>
-                )}
               </div>
-
-              {/* Display Added Custom Ingredients */}
-              {customIngredients.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {customIngredients.map((ingredient) => (
-                    <Badge
-                      key={ingredient}
-                      variant="secondary"
-                      className="p-2 pr-1 bg-amber-100 text-amber-800 border-amber-300"
-                    >
-                      {ingredient}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-4 w-4 p-0 ml-1 hover:bg-amber-200"
-                        onClick={() => removeCustomIngredient(ingredient)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Flavor Preferences */}

@@ -202,9 +202,9 @@ export function useVibeBar() {
 
   const getFormData = (): CocktailFormData => {
     const formData = {
-      selectedIngredients: [...selectedIngredients, ...customIngredients],
+      selectedIngredients,
       selectedFlavors,
-      customIngredients,
+      customIngredients: customIngredientInput.trim() || undefined,
       strength: selectedAlcoholStrength || undefined,
       occasion: selectedVibe || undefined,
       specialRequests: specialRequests.trim() || undefined,
@@ -212,9 +212,9 @@ export function useVibeBar() {
     
     // Log form data collection
     logger.logUserAction('form-data-collected', {
-      totalIngredients: formData.selectedIngredients.length,
-      totalFlavors: formData.selectedFlavors.length,
-      customIngredients: formData.customIngredients.length,
+      totalIngredients: selectedIngredients.length,
+      totalFlavors: selectedFlavors.length,
+      customIngredients: customIngredientInput.length,
       alcoholStrength: selectedAlcoholStrength,
       vibe: selectedVibe,
       hasSpecialRequests: !!formData.specialRequests,

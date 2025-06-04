@@ -37,13 +37,13 @@ export default function VibeBarApp() {
 
   // Function to prepare LLM prompt data - mirrors the logic from LandingView
   const prepareLLMPrompt = () => {
-    const allIngredients = [...selectedIngredients, ...customIngredients]
     const prompt = {
-      ingredients: allIngredients.length > 0 ? allIngredients : preferences.baseSpirits,
+      ingredients: selectedIngredients.length > 0 ? selectedIngredients : preferences.baseSpirits,
       flavors: selectedFlavors.length > 0 ? selectedFlavors : preferences.flavorProfiles,
       strength: selectedAlcoholStrength || preferences.defaultStrength,
       vibe: selectedVibe || preferences.defaultVibe,
       dietaryRestrictions: preferences.dietaryRestrictions,
+      customIngredients: customIngredientInput.trim() || undefined,
       specialRequests: specialRequests.trim() || undefined,
       userContext: {
         preferredSpirits: preferences.baseSpirits,

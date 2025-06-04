@@ -143,9 +143,10 @@ export function validateSelectionLimits(
 export function validateRecipeGeneration(formData: {
   selectedIngredients: string[]
   selectedFlavors: string[]
-  customIngredients: string[]
+  customIngredients?: string
 }): ValidationResult {
-  const totalIngredients = formData.selectedIngredients.length + formData.customIngredients.length
+  const hasCustomIngredients = !!(formData.customIngredients?.trim())
+  const totalIngredients = formData.selectedIngredients.length + (hasCustomIngredients ? 1 : 0)
   
   if (totalIngredients === 0) {
     return { 
