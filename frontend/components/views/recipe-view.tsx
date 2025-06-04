@@ -22,6 +22,36 @@ interface RecipeViewProps {
   setCurrentView: (view: ViewType) => void
 }
 
+// Recipe Data Configuration
+const RECIPE_DATA = {
+  title: "Sunset Serenity",
+  description: "A vibrant tequila-based cocktail with tropical notes and a gentle spicy kick",
+  meta: {
+    prepTime: "3 min prep",
+    difficulty: "Easy",
+    servings: "1 serving"
+  },
+  ingredients: [
+    { name: "Silver Tequila", amount: "2 oz" },
+    { name: "Fresh Pineapple Juice", amount: "1 oz" },
+    { name: "Fresh Lime Juice", amount: "0.5 oz" },
+    { name: "Agave Syrup", amount: "0.25 oz" },
+    { name: "Jalapeño Slice", amount: "1 piece" },
+    { name: "Tajín (rim)", amount: "For garnish" }
+  ],
+  instructions: [
+    "Rim a rocks glass with Tajín by running a lime wedge around the edge and dipping in the spice blend.",
+    "In a shaker, muddle the jalapeño slice gently to release oils without breaking it apart.",
+    "Add tequila, pineapple juice, lime juice, and agave syrup to the shaker with ice.",
+    "Shake vigorously for 15 seconds and double strain into the prepared glass over fresh ice.",
+    "Garnish with a pineapple wedge and lime wheel. Serve immediately."
+  ],
+  glassware: {
+    type: "Rocks glass (old fashioned)",
+    garnish: "Pineapple wedge & lime wheel"
+  }
+}
+
 export function RecipeView({ currentView, setCurrentView }: RecipeViewProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -30,32 +60,28 @@ export function RecipeView({ currentView, setCurrentView }: RecipeViewProps) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button variant="ghost" onClick={() => setCurrentView("landing")} className="mb-4">
-            ← Back to Generator
+            ← Back to Recipe Creator
           </Button>
         </div>
 
         <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
           <CardHeader className="text-center pb-6">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Sparkles className="h-6 w-6 text-amber-600" />
-              <Badge className="bg-green-100 text-green-800">Fresh Recipe</Badge>
-            </div>
-            <CardTitle className="text-3xl font-bold text-gray-900">Sunset Serenity</CardTitle>
+            <CardTitle className="text-3xl font-bold text-gray-900">{RECIPE_DATA.title}</CardTitle>
             <CardDescription className="text-lg">
-              A vibrant tequila-based cocktail with tropical notes and a gentle spicy kick
+              {RECIPE_DATA.description}
             </CardDescription>
 
             {/* Recipe Meta */}
             <div className="flex justify-center gap-6 mt-4 text-sm text-gray-600">
               <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />3 min prep
+                <Clock className="h-4 w-4" />{RECIPE_DATA.meta.prepTime}
               </div>
               <div className="flex items-center gap-1">
                 <ChefHat className="h-4 w-4" />
-                Easy
+                {RECIPE_DATA.meta.difficulty}
               </div>
               <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />1 serving
+                <Users className="h-4 w-4" />{RECIPE_DATA.meta.servings}
               </div>
             </div>
           </CardHeader>
@@ -68,30 +94,12 @@ export function RecipeView({ currentView, setCurrentView }: RecipeViewProps) {
                 Ingredients
               </h3>
               <div className="grid md:grid-cols-2 gap-3">
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Silver Tequila</span>
-                  <span className="font-semibold">2 oz</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Fresh Pineapple Juice</span>
-                  <span className="font-semibold">1 oz</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Fresh Lime Juice</span>
-                  <span className="font-semibold">0.5 oz</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Agave Syrup</span>
-                  <span className="font-semibold">0.25 oz</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Jalapeño Slice</span>
-                  <span className="font-semibold">1 piece</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span>Tajín (rim)</span>
-                  <span className="font-semibold">For garnish</span>
-                </div>
+                {RECIPE_DATA.ingredients.map((ingredient, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
+                    <span>{ingredient.name}</span>
+                    <span className="font-semibold">{ingredient.amount}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -99,46 +107,16 @@ export function RecipeView({ currentView, setCurrentView }: RecipeViewProps) {
             <div>
               <h3 className="text-xl font-semibold mb-4">Instructions</h3>
               <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    1
+                {RECIPE_DATA.instructions.map((instruction, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
+                      {index + 1}
+                    </div>
+                    <p className="text-gray-700 pt-1">
+                      {instruction}
+                    </p>
                   </div>
-                  <p className="text-gray-700 pt-1">
-                    Rim a rocks glass with Tajín by running a lime wedge around the edge and dipping in the spice blend.
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    2
-                  </div>
-                  <p className="text-gray-700 pt-1">
-                    In a shaker, muddle the jalapeño slice gently to release oils without breaking it apart.
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    3
-                  </div>
-                  <p className="text-gray-700 pt-1">
-                    Add tequila, pineapple juice, lime juice, and agave syrup to the shaker with ice.
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    4
-                  </div>
-                  <p className="text-gray-700 pt-1">
-                    Shake vigorously for 15 seconds and double strain into the prepared glass over fresh ice.
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    5
-                  </div>
-                  <p className="text-gray-700 pt-1">
-                    Garnish with a pineapple wedge and lime wheel. Serve immediately.
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -146,11 +124,11 @@ export function RecipeView({ currentView, setCurrentView }: RecipeViewProps) {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="p-4 bg-orange-50 rounded-lg">
                 <h4 className="font-semibold mb-2">Recommended Glassware</h4>
-                <p className="text-gray-700">Rocks glass (old fashioned)</p>
+                <p className="text-gray-700">{RECIPE_DATA.glassware.type}</p>
               </div>
               <div className="p-4 bg-orange-50 rounded-lg">
                 <h4 className="font-semibold mb-2">Perfect Garnish</h4>
-                <p className="text-gray-700">Pineapple wedge & lime wheel</p>
+                <p className="text-gray-700">{RECIPE_DATA.glassware.garnish}</p>
               </div>
             </div>
 
