@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { generateCocktailRecipe } from "@/lib/api"
-import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
+import type { UserPreferences as ApiUserPreferences } from "@/lib/api"
 import { useState } from "react"
 import {
   Sparkles,
@@ -36,7 +36,6 @@ interface LandingViewProps {
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
-  prepareLLMPromptCallback?: () => unknown
   isFormRestored?: boolean
 }
 
@@ -56,7 +55,6 @@ export function LandingView({
   setVibe,
   updateSpecialRequests,
   userPreferences,
-  prepareLLMPromptCallback,
   isFormRestored = false,
 }: LandingViewProps) {
   const [isGenerating, setIsGenerating] = useState(false)

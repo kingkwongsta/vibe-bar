@@ -67,21 +67,17 @@ export default function VibeBarApp() {
             setCurrentView={setCurrentView}
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
-            customIngredients={customIngredients}
             customIngredientInput={customIngredientInput}
             selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
-            addCustomIngredient={addCustomIngredient}
-            removeCustomIngredient={removeCustomIngredient}
             setCustomIngredientInput={setCustomIngredientInput}
             setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
-            prepareLLMPromptCallback={prepareLLMPrompt}
             isFormRestored={isFormRestored}
           />
         )
@@ -105,21 +101,17 @@ export default function VibeBarApp() {
             setCurrentView={setCurrentView}
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
-            customIngredients={customIngredients}
             customIngredientInput={customIngredientInput}
             selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
-            addCustomIngredient={addCustomIngredient}
-            removeCustomIngredient={removeCustomIngredient}
             setCustomIngredientInput={setCustomIngredientInput}
             setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
-            prepareLLMPromptCallback={prepareLLMPrompt}
             isFormRestored={isFormRestored}
           />
         )
