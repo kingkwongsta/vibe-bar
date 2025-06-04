@@ -7,13 +7,13 @@ from pydantic import BaseModel
 
 
 class UserPreferences(BaseModel):
-    """Input model matching frontend user preferences"""
-    baseSpirits: List[str] = []
-    flavorProfiles: List[str] = []
-    defaultStrength: str = "medium"
-    dietaryRestrictions: List[str] = []
-    defaultVibe: str = ""
-    preferredVibes: List[str] = []
+    """Request model matching frontend input data structure"""
+    ingredients: List[str] = []
+    customIngredients: Optional[str] = None
+    flavors: List[str] = []
+    strength: Optional[str] = None
+    vibe: Optional[str] = None
+    specialRequests: Optional[str] = None
 
 
 class RecipeMeta(BaseModel):

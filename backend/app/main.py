@@ -1,5 +1,5 @@
 # uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, UTC
 import logging
@@ -97,7 +97,17 @@ async def ai_health_check():
 
 @app.post("/api/cocktails/generate", response_model=APIResponse)
 async def generate_cocktail_recipe(
-    preferences: UserPreferences,
+    preferences: UserPreferences = Body(
+        ...,
+        example={
+            "ingredients": ["vodka"],
+            "customIngredients": "",
+            "flavors": ["sweet"],
+            "strength": "strong",
+            "vibe": "date night",
+            "specialRequests": "no eggs"
+        }
+    ),
     cocktail_service = Depends(get_cocktail_service)
 ):
     """Generate a cocktail recipe based on user preferences"""
