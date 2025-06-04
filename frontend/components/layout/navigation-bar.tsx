@@ -1,4 +1,4 @@
-import { Wine, Home, Heart, BookOpen, User } from "lucide-react"
+import { Wine, Home, Heart, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { ViewType } from "@/lib/types"
 
@@ -41,17 +41,6 @@ export function NavigationBar({ currentView, setCurrentView }: NavigationBarProp
             >
               <Heart className="h-4 w-4 inline mr-1" />
               Saved
-            </button>
-            <button
-              onClick={() => setCurrentView("mybar")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "mybar" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <BookOpen className="h-4 w-4 inline mr-1" />
-              My Bar
             </button>
             <button
               onClick={() => setCurrentView("profile")}

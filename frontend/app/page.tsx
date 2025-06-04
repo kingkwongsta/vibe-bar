@@ -5,7 +5,6 @@ import { useUserPreferences } from "@/hooks/use-user-preferences"
 import { LandingView } from "@/components/views/landing-view"
 import { RecipeView } from "@/components/views/recipe-view"
 import { SavedRecipesView } from "@/components/views/saved-recipes-view"
-import { MyBarView } from "@/components/views/my-bar-view"
 import { ProfileView } from "@/components/views/profile-view"
 import { DevLogger } from "@/components/debug/dev-logger"
 
@@ -85,9 +84,6 @@ export default function VibeBarApp() {
       
       case "saved":
         return <SavedRecipesView currentView={currentView} setCurrentView={setCurrentView} />
-      
-      case "mybar":
-        return <MyBarView currentView={currentView} setCurrentView={setCurrentView} />
       
       case "profile":
         return <ProfileView currentView={currentView} setCurrentView={setCurrentView} />
