@@ -3,7 +3,7 @@
 Test script to demonstrate Pydantic models for Phase 3
 """
 
-from datetime import datetime
+from datetime import datetime, UTC
 from app.models import (
     VibeCreate, VibeResponse, VibeCategory, VibeIntensity,
     MoodCreate, MoodResponse, MoodType, EmotionalState,
@@ -34,7 +34,7 @@ def test_vibe_models():
         intensity=vibe_data.intensity,
         mood_score=vibe_data.mood_score,
         tags=vibe_data.tags,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(UTC)
     )
     print(f"✅ VibeResponse: ID {vibe_response.id} - Score: {vibe_response.mood_score}/10")
     
@@ -63,7 +63,7 @@ def test_mood_models():
         energy_level=mood_data.energy_level,
         stress_level=mood_data.stress_level,
         notes=mood_data.notes,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(UTC)
     )
     print(f"✅ MoodResponse: ID {mood_response.id} with {len(mood_response.secondary_moods)} secondary moods")
 
