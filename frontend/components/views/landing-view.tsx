@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { generateCocktailRecipe } from "@/lib/api"
-import type { UserPreferences as ApiUserPreferences } from "@/lib/api"
+import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
 import { useState } from "react"
 import {
   Sparkles,
@@ -36,6 +36,7 @@ interface LandingViewProps {
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
+  setGeneratedRecipe: (recipe: CocktailRecipe) => void
   isFormRestored?: boolean
 }
 
@@ -55,6 +56,7 @@ export function LandingView({
   setVibe,
   updateSpecialRequests,
   userPreferences,
+  setGeneratedRecipe,
   isFormRestored = false,
 }: LandingViewProps) {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -149,6 +151,7 @@ export function LandingView({
 
       if (response.success && response.data) {
         setCurrentView("recipe")
+        setGeneratedRecipe(response.data)
       } else {
         throw new Error(response.message || 'Failed to generate recipe')
       }

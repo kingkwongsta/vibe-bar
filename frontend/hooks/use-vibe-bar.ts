@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import type { ViewType, CocktailFormData } from "@/lib/types"
+import type { CocktailRecipe } from "@/lib/api"
 import { logger } from "@/lib/logger"
 import { useFormPersistence } from "./use-form-persistence"
 
@@ -31,6 +32,7 @@ export function useVibeBar() {
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null)
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([])
   const [specialRequests, setSpecialRequests] = useState("")
+  const [generatedRecipe, setGeneratedRecipe] = useState<CocktailRecipe | null>(null)
 
   const { saveFormState, loadFormState, clearFormState, isRestored } = useFormPersistence()
 
@@ -246,6 +248,7 @@ export function useVibeBar() {
     setSelectedVibe(null)
     setSpecialRequests("")
     setDietaryRestrictions([])
+    setGeneratedRecipe(null)
     
     // Clear persisted state
     clearFormState()
@@ -262,6 +265,8 @@ export function useVibeBar() {
     selectedVibe,
     dietaryRestrictions,
     specialRequests,
+    generatedRecipe,
+    setGeneratedRecipe,
     toggleIngredient,
     toggleFlavor,
     addCustomIngredient,
