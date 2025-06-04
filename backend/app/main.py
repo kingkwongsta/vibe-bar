@@ -1,8 +1,10 @@
 # uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 from datetime import datetime, UTC
+
+# Import our configuration
+from app.config import config
 
 # Import our models
 from app.models import (
@@ -14,20 +16,20 @@ from app.models import (
 # Create FastAPI app
 app = FastAPI(
     title="Vibe Bar API",
-    description="Backend API for Vibe Bar - Starting Simple",
+    description="Backend API for Vibe Bar - AI-Powered Mood & Vibe Tracking",
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Add CORS middleware
+# Add CORS middleware using configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Next.js dev server
         "http://localhost:3001",  # Alternative port
         "http://127.0.0.1:3000",
-        os.getenv("FRONTEND_URL", "http://localhost:3000")  # Production URL from env
+        config.FRONTEND_URL       # Production URL from env
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -43,8 +45,9 @@ async def root():
         data={
             "version": "0.1.0",
             "status": "running",
+            "environment": config.ENVIRONMENT,
             "docs": "/docs",
-            "phase": "3 - Basic Pydantic Models Added"
+            "phase": "4 - OpenRouter Integration (In Progress)"
         }
     )
 
@@ -57,7 +60,35 @@ async def health_check():
         version="0.1.0",
         dependencies={
             "pydantic": True,
-            "fastapi": True
+            "fastapi": True,
+            "openrouter_configured": config.validate_openrouter_config(),
+            "environment": config.ENVIRONMENT
+        }
+    )
+
+# Configuration endpoint for debugging (development only)
+@app.get("/api/config", response_model=APIResponse)
+async def get_config_status():
+    """Get configuration status (development only)"""
+    if not config.is_development():
+        return APIResponse(
+            message="Configuration endpoint only available in development",
+            data={}
+        )
+    
+    return APIResponse(
+        message="Configuration status",
+        data={
+            "environment": config.ENVIRONMENT,
+            "openrouter_configured": config.validate_openrouter_config(),
+            "default_ai_model": config.DEFAULT_AI_MODEL,
+            "fallback_ai_model": config.FALLBACK_AI_MODEL,
+            "ai_settings": {
+                "timeout": config.AI_TIMEOUT,
+                "max_retries": config.AI_MAX_RETRIES,
+                "temperature": config.AI_TEMPERATURE,
+                "max_tokens": config.AI_MAX_TOKENS
+            }
         }
     )
 
@@ -140,4 +171,10 @@ async def get_mood_types():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    # Use configuration for server settings
+    uvicorn.run(
+        app, 
+        host="0.0.0.0", 
+        port=8000,
+        reload=config.is_development()
+    ) 
