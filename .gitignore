@@ -11,6 +11,21 @@
 ehthumbs.db
 Thumbs.db
 
+# Python cache files (global)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environments (global)
+venv/
+env/
+ENV/
+.venv/
+.env/
+env.bak/
+venv.bak/
+pyvenv.cfg
+
 # IDE and Editor files
 .vscode/
 .idea/
@@ -33,144 +48,99 @@ lerna-debug.log*
 
 # Dependencies
 frontend/node_modules/
-frontend/.pnp
-frontend/.pnp.*
-frontend/.yarn/*
-!frontend/.yarn/patches
-!frontend/.yarn/plugins
-!frontend/.yarn/releases
-!frontend/.yarn/versions
 
 # Next.js
 frontend/.next/
-frontend/out/
-frontend/build/
-frontend/dist/
+
+# Build outputs
+build/
+dist/
+out/
 
 # Testing
-frontend/coverage/
-frontend/.nyc_output
+coverage/
 
 # Environment variables
 frontend/.env*
 !frontend/.env.example
 
-# Vercel
-frontend/.vercel
-
 # TypeScript
-frontend/*.tsbuildinfo
-frontend/next-env.d.ts
-
-# Storybook
-frontend/storybook-static
+*.tsbuildinfo
+next-env.d.ts
 
 # =====================================
 # BACKEND (Python)
 # =====================================
 
-# Python
-backend/__pycache__/
-backend/*.py[cod]
-backend/*$py.class
-backend/*.so
-backend/.Python
-backend/build/
-backend/develop-eggs/
-backend/dist/
-backend/downloads/
-backend/eggs/
-backend/.eggs/
-backend/lib/
-backend/lib64/
-backend/parts/
-backend/sdist/
-backend/var/
-backend/wheels/
-backend/share/python-wheels/
-backend/*.egg-info/
-backend/.installed.cfg
-backend/*.egg
-backend/MANIFEST
+# Python compiled files
+*.so
+*.pyc
 
-# Virtual environments
-backend/venv/
-backend/env/
-backend/ENV/
-backend/env.bak/
-backend/venv.bak/
-backend/.venv/
+# Python build artifacts (these will be created during build/install)
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+*.egg
+MANIFEST
 
-# PyInstaller
-backend/*.manifest
-backend/*.spec
+# Virtual environments (handled globally above)
 
-# Unit test / coverage reports
-backend/htmlcov/
-backend/.tox/
-backend/.nox/
-backend/.coverage
-backend/.coverage.*
-backend/.cache
-backend/nosetests.xml
-backend/coverage.xml
-backend/*.cover
-backend/*.py,cover
-backend/.hypothesis/
-backend/.pytest_cache/
-backend/cover/
+# Python package files
+*.manifest
+*.spec
 
-# Jupyter Notebook
-backend/.ipynb_checkpoints
+# Testing & Coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
 
-# IPython
-backend/profile_default/
-backend/ipython_config.py
+# Development tools
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+.python-version
+Pipfile.lock
+poetry.lock
 
-# pyenv
-backend/.python-version
+# Task runners
+celerybeat-schedule
+celerybeat.pid
 
-# pipenv
-backend/Pipfile.lock
+# Generated files
+*.sage.py
 
-# Poetry
-backend/poetry.lock
+# Environment variables (already handled globally)
 
-# Celery
-backend/celerybeat-schedule
-backend/celerybeat.pid
+# Documentation
+site/
 
-# SageMath parsed files
-backend/*.sage.py
-
-# Environment variables
-backend/.env
-backend/.env.*
-!backend/.env.example
-
-# Spyder project settings
-backend/.spyderproject
-backend/.spyproject
-
-# Rope project settings
-backend/.ropeproject
-
-# mkdocs documentation
-backend/site/
-
-# mypy
-backend/.mypy_cache/
-backend/.dmypy.json
-backend/dmypy.json
-
-# Pyre type checker
-backend/.pyre/
-
-# pytype static type analyzer
-backend/.pytype/
-
-# PyCharm
-backend/.idea/
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
 
 # =====================================
 # DATABASE
