@@ -1,26 +1,18 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
-import { generateCocktailRecipe, testBackendConnectivity } from "@/lib/api"
+import { generateCocktailRecipe } from "@/lib/api"
 import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
 import { useState } from "react"
 import {
   Sparkles,
-  ChefHat,
-  Users,
-  Star,
-  Zap,
-  Plus,
-  X,
   AlertCircle,
   CheckCircle,
   Loader2,
@@ -33,21 +25,18 @@ interface LandingViewProps {
   setCurrentView: (view: ViewType) => void
   selectedIngredients: string[]
   selectedFlavors: string[]
-  customIngredients: string[]
   customIngredientInput: string
   selectedAlcoholStrength: string | null
   selectedVibe: string | null
   specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
-  addCustomIngredient: () => void
-  removeCustomIngredient: (ingredient: string) => void
   setCustomIngredientInput: (input: string) => void
   setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
-  prepareLLMPromptCallback?: () => any
+  prepareLLMPromptCallback?: () => unknown
   isFormRestored?: boolean
 }
 
@@ -56,15 +45,12 @@ export function LandingView({
   setCurrentView,
   selectedIngredients,
   selectedFlavors,
-  customIngredients,
   customIngredientInput,
   selectedAlcoholStrength,
   selectedVibe,
   specialRequests,
   toggleIngredient,
   toggleFlavor,
-  addCustomIngredient,
-  removeCustomIngredient,
   setCustomIngredientInput,
   setAlcoholStrength,
   setVibe,
@@ -75,7 +61,6 @@ export function LandingView({
 }: LandingViewProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
-  const [generatedRecipe, setGeneratedRecipe] = useState<CocktailRecipe | null>(null)
 
   const {
     validateSpecialRequestsInput,
@@ -130,43 +115,6 @@ export function LandingView({
     toggleFlavor(flavor)
   }
 
-  // Function to prepare data for LLM cocktail generation
-  const prepareLLMPrompt = () => {
-    const validation = validateRecipeGenerationInput({
-      selectedIngredients,
-      selectedFlavors,
-      customIngredients: customIngredientInput.trim() || undefined,
-    })
-    
-    if (!validation.isValid) {
-      return null // Don't proceed if validation fails
-    }
-    
-    if (prepareLLMPromptCallback) {
-      return prepareLLMPromptCallback()
-    }
-    
-    // Fallback to original logic if callback not provided
-    const prompt = {
-      ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
-      flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
-      strength: selectedAlcoholStrength || userPreferences.defaultStrength,
-      vibe: selectedVibe || userPreferences.defaultVibe,
-      dietaryRestrictions: userPreferences.dietaryRestrictions,
-      customIngredients: customIngredientInput.trim() || undefined,
-      specialRequests: specialRequests.trim() || undefined,
-      userContext: {
-        preferredSpirits: userPreferences.baseSpirits,
-        preferredFlavors: userPreferences.flavorProfiles,
-        preferredVibes: userPreferences.preferredVibes,
-        restrictions: userPreferences.dietaryRestrictions
-      }
-    }
-    
-    console.log("LLM Prompt Data:", prompt)
-    return prompt
-  }
-
   // Function to handle recipe generation via API
   const handleGenerateRecipe = async () => {
     // Clear any previous errors
@@ -202,7 +150,6 @@ export function LandingView({
       const response = await generateCocktailRecipe(preferences)
 
       if (response.success && response.data) {
-        setGeneratedRecipe(response.data)
         setCurrentView("recipe")
       } else {
         throw new Error(response.message || 'Failed to generate recipe')
@@ -225,7 +172,7 @@ export function LandingView({
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              We've restored your previous selections. Continue where you left off!
+              We&apos;ve restored your previous selections. Continue where you left off!
             </AlertDescription>
           </Alert>
         </div>
@@ -241,7 +188,7 @@ export function LandingView({
             </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Recipes tailored to your taste, ingredients, and mood. Discover unique drinks you'll
+            Recipes tailored to your taste, ingredients, and mood. Discover unique drinks you&apos;ll
             love.
           </p>
         </div>
