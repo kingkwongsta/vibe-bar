@@ -28,7 +28,6 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
     isLoading,
     toggleBaseSpirit,
     toggleFlavorProfile,
-    setDefaultStrength,
     toggleDietaryRestriction,
     setDefaultVibe,
     togglePreferredVibe,
@@ -147,22 +146,6 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                         {flavor}
                       </Badge>
                     ))}
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-1 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">Default Strength</Label>
-                    <Select value={preferences.defaultStrength} onValueChange={setDefaultStrength}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="strong">Strong</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
               </CardContent>

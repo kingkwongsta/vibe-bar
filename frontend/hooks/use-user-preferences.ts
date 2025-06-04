@@ -8,7 +8,6 @@ const PREFERENCES_STORAGE_KEY = "vibe-bar-user-preferences"
 const defaultPreferences: UserPreferences = {
   baseSpirits: [],
   flavorProfiles: [],
-  defaultStrength: "medium",
   dietaryRestrictions: [],
   defaultVibe: "",
   preferredVibes: []
@@ -64,11 +63,6 @@ export function useUserPreferences() {
     savePreferences({ flavorProfiles: updatedFlavors })
   }
 
-  // Set default strength
-  const setDefaultStrength = (strength: string) => {
-    savePreferences({ defaultStrength: strength })
-  }
-
   // Toggle dietary restriction
   const toggleDietaryRestriction = (restriction: string) => {
     const updatedRestrictions = preferences.dietaryRestrictions.includes(restriction)
@@ -114,7 +108,6 @@ export function useUserPreferences() {
     isLoading,
     toggleBaseSpirit,
     toggleFlavorProfile,
-    setDefaultStrength,
     toggleDietaryRestriction,
     setDefaultVibe,
     togglePreferredVibe,

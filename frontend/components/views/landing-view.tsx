@@ -17,7 +17,7 @@ import {
   CheckCircle,
   Loader2,
 } from "lucide-react"
-import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
+import { INGREDIENTS, FLAVOR_PROFILES, VIBES } from "@/lib/constants"
 import type { ViewType, UserPreferences } from "@/lib/types"
 
 interface LandingViewProps {
@@ -26,13 +26,11 @@ interface LandingViewProps {
   selectedIngredients: string[]
   selectedFlavors: string[]
   customIngredientInput: string
-  selectedAlcoholStrength: string | null
   selectedVibe: string | null
   specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
   setCustomIngredientInput: (input: string) => void
-  setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
@@ -46,13 +44,11 @@ export function LandingView({
   selectedIngredients,
   selectedFlavors,
   customIngredientInput,
-  selectedAlcoholStrength,
   selectedVibe,
   specialRequests,
   toggleIngredient,
   toggleFlavor,
   setCustomIngredientInput,
-  setAlcoholStrength,
   setVibe,
   updateSpecialRequests,
   userPreferences,
@@ -71,12 +67,11 @@ export function LandingView({
   } = useFormValidation()
 
   const handleSpecialRequestsChange = (requests: string) => {
-    const validation = validateSpecialRequestsInput(requests)
-    if (validation.isValid && validation.sanitized !== undefined) {
-      updateSpecialRequests(validation.sanitized)
-    } else {
-      updateSpecialRequests(requests) // Allow typing but show error
-    }
+    // Always update the special requests to allow spaces
+    updateSpecialRequests(requests)
+    
+    // Run validation for error display but don't use sanitized version
+    validateSpecialRequestsInput(requests)
   }
 
   const handleCustomIngredientsChange = (ingredients: string) => {
@@ -139,7 +134,6 @@ export function LandingView({
         ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
         customIngredients: customIngredientInput.trim() || undefined,
         flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
-        strength: selectedAlcoholStrength || userPreferences.defaultStrength,
         vibe: selectedVibe || userPreferences.defaultVibe,
         specialRequests: specialRequests.trim() || undefined,
       }
@@ -217,14 +211,9 @@ export function LandingView({
             {/* Available Ingredients */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
-                Choose ingredients for your recipe? 
-                {selectedIngredients.length > 0 && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    ({selectedIngredients.length} selected)
-                  </span>
-                )}
+                Choose a spirit or non-alcoholic option
               </Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              <div className="flex flex-wrap gap-4">
                 {INGREDIENTS.map((ingredient) => (
                   <Badge
                     key={ingredient}
@@ -273,13 +262,8 @@ export function LandingView({
             <div>
               <Label className="text-lg font-semibold mb-4 block">
                 Choose a flavor profile?
-                {selectedFlavors.length > 0 && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    ({selectedFlavors.length} selected)
-                  </span>
-                )}
               </Label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-4">
                 {FLAVOR_PROFILES.map((flavor) => (
                   <Badge
                     key={flavor}
@@ -298,30 +282,10 @@ export function LandingView({
             </div>
 
             {/* Quick Options */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <Label className="text-lg font-semibold mb-4 block">Alcohol Strength</Label>
-                <div className="flex flex-wrap gap-2">
-                  {ALCOHOL_STRENGTHS.map((strength) => (
-                    <Badge
-                      key={strength}
-                      variant={selectedAlcoholStrength === strength ? "default" : "outline"}
-                      className={`cursor-pointer p-2 transition-all ${
-                        selectedAlcoholStrength === strength
-                          ? "bg-purple-600 hover:bg-purple-700"
-                          : "hover:bg-purple-50 hover:border-purple-300"
-                      }`}
-                      onClick={() => setAlcoholStrength(strength)}
-                    >
-                      {strength}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
+            <div>
               <div>
                 <Label className="text-lg font-semibold mb-4 block">Vibe</Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-4">
                   {VIBES.map((vibe) => (
                     <Badge
                       key={vibe}

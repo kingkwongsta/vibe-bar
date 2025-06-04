@@ -11,12 +11,11 @@ export interface CocktailFormData {
   selectedIngredients: string[]
   selectedFlavors: string[]
   customIngredients?: string
-  strength?: string
   occasion?: string
   specialRequests?: string
 }
 
-export type ViewType = "landing" | "recipe" | "saved" | "mybar" | "profile"
+export type ViewType = "landing" | "recipe" | "saved" | "profile"
 
 export interface BarInventory {
   spirits: string[]
@@ -28,7 +27,6 @@ export interface BarInventory {
 export interface UserPreferences {
   baseSpirits: string[]
   flavorProfiles: string[]
-  defaultStrength: string
   dietaryRestrictions: string[]
   defaultVibe: string
   preferredVibes: string[]

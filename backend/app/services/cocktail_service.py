@@ -59,8 +59,6 @@ Create a creative, delicious cocktail recipe."""
                 user_prompt += f"Additional ingredients: {preferences.customIngredients}\n"
             if preferences.flavors:
                 user_prompt += f"Flavor profiles: {', '.join(preferences.flavors)}\n"
-            if preferences.strength:
-                user_prompt += f"Alcohol strength: {preferences.strength}\n"
             if preferences.vibe:
                 user_prompt += f"Vibe: {preferences.vibe}\n"
             if preferences.specialRequests:
@@ -70,6 +68,9 @@ Create a creative, delicious cocktail recipe."""
                 user_prompt += "Create a creative and delicious cocktail recipe.\n"
                 
             user_prompt += "\nRespond with ONLY the JSON object, no markdown or extra text."
+            
+            # Log the prompt being sent to LLM for debugging
+            logger.info(f"Sending prompt to LLM: {user_prompt}")
             
             messages = [
                 AIMessage(role="system", content=system_prompt),
