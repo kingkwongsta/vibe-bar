@@ -17,7 +17,7 @@ import {
   CheckCircle,
   Loader2,
 } from "lucide-react"
-import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
+import { INGREDIENTS, FLAVOR_PROFILES, VIBES } from "@/lib/constants"
 import type { ViewType, UserPreferences } from "@/lib/types"
 
 interface LandingViewProps {
@@ -135,7 +135,6 @@ export function LandingView({
         ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
         customIngredients: customIngredientInput.trim() || undefined,
         flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
-        strength: userPreferences.defaultStrength,
         vibe: selectedVibe || userPreferences.defaultVibe,
         specialRequests: specialRequests.trim() || undefined,
       }

@@ -29,12 +29,9 @@ async def test_simple_cocktail_generation():
         
         # Test with user preferences matching frontend structure
         preferences = UserPreferences(
-            baseSpirits=["gin"],
-            flavorProfiles=["herbal", "citrusy"],
-            defaultStrength="medium",
-            dietaryRestrictions=[],
-            defaultVibe="sophisticated",
-            preferredVibes=["elegant", "classic"]
+            ingredients=["gin"],
+            flavors=["herbal", "citrusy"],
+            vibe="sophisticated"
         )
         
         recipe = await cocktail_service.generate_cocktail_recipe(preferences)
@@ -96,12 +93,10 @@ async def test_multiple_preferences():
         
         # Test with multiple preferences
         preferences = UserPreferences(
-            baseSpirits=["whiskey", "bourbon"],
-            flavorProfiles=["smoky", "sweet"],
-            defaultStrength="strong",
-            dietaryRestrictions=["no nuts"],
-            defaultVibe="cozy",
-            preferredVibes=["winter", "evening"]
+            ingredients=["whiskey", "bourbon"],
+            flavors=["smoky", "sweet"],
+            vibe="cozy",
+            specialRequests="no nuts"
         )
         
         recipe = await cocktail_service.generate_cocktail_recipe(preferences)

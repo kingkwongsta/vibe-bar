@@ -7,7 +7,6 @@ interface FormState {
   selectedIngredients: string[]
   selectedFlavors: string[]
   customIngredients: string[]
-  selectedAlcoholStrength: string | null
   selectedVibe: string | null
   specialRequests: string
   dietaryRestrictions: string[]

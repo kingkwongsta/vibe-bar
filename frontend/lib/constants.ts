@@ -71,11 +71,4 @@ export const VIBES = [
   "Relaxing", 
   "Celebration",
   "Date Night",
-] as const
-
-export const ALCOHOL_STRENGTHS = [
-  "Light",
-  "Medium", 
-  "Strong",
-  "Non-alcoholic",
 ] as const 

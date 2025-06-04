@@ -11,7 +11,6 @@ class UserPreferences(BaseModel):
     ingredients: List[str] = []
     customIngredients: Optional[str] = None
     flavors: List[str] = []
-    strength: Optional[str] = None
     vibe: Optional[str] = None
     specialRequests: Optional[str] = None
 

@@ -103,7 +103,6 @@ async def generate_cocktail_recipe(
             "ingredients": ["vodka"],
             "customIngredients": "",
             "flavors": ["sweet"],
-            "strength": "strong",
             "vibe": "date night",
             "specialRequests": "no eggs"
         }

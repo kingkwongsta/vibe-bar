@@ -59,8 +59,6 @@ Create a creative, delicious cocktail recipe."""
                 user_prompt += f"Additional ingredients: {preferences.customIngredients}\n"
             if preferences.flavors:
                 user_prompt += f"Flavor profiles: {', '.join(preferences.flavors)}\n"
-            if preferences.strength:
-                user_prompt += f"Alcohol strength: {preferences.strength}\n"
             if preferences.vibe:
                 user_prompt += f"Vibe: {preferences.vibe}\n"
             if preferences.specialRequests:

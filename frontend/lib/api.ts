@@ -16,7 +16,6 @@ export interface UserPreferences {
   ingredients: string[]
   customIngredients?: string
   flavors: string[]
-  strength?: string
   vibe?: string
   specialRequests?: string
 }

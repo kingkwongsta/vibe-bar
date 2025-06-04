@@ -17,7 +17,6 @@ export default function VibeBarApp() {
     selectedFlavors,
     customIngredients,
     customIngredientInput,
-    selectedAlcoholStrength,
     selectedVibe,
     specialRequests,
     toggleIngredient,
@@ -25,7 +24,6 @@ export default function VibeBarApp() {
     addCustomIngredient,
     removeCustomIngredient,
     setCustomIngredientInput,
-    setAlcoholStrength,
     setVibe,
     updateSpecialRequests,
     generatedRecipe,
@@ -42,7 +40,6 @@ export default function VibeBarApp() {
     const prompt = {
       ingredients: selectedIngredients.length > 0 ? selectedIngredients : preferences.baseSpirits,
       flavors: selectedFlavors.length > 0 ? selectedFlavors : preferences.flavorProfiles,
-      strength: selectedAlcoholStrength || preferences.defaultStrength,
       vibe: selectedVibe || preferences.defaultVibe,
       dietaryRestrictions: preferences.dietaryRestrictions,
       customIngredients: customIngredientInput.trim() || undefined,
@@ -70,13 +67,11 @@ export default function VibeBarApp() {
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
             customIngredientInput={customIngredientInput}
-            selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
             setCustomIngredientInput={setCustomIngredientInput}
-            setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
@@ -105,13 +100,11 @@ export default function VibeBarApp() {
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
             customIngredientInput={customIngredientInput}
-            selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
             setCustomIngredientInput={setCustomIngredientInput}
-            setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
