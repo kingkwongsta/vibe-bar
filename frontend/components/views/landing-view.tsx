@@ -26,13 +26,11 @@ interface LandingViewProps {
   selectedIngredients: string[]
   selectedFlavors: string[]
   customIngredientInput: string
-  selectedAlcoholStrength: string | null
   selectedVibe: string | null
   specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
   setCustomIngredientInput: (input: string) => void
-  setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
@@ -46,13 +44,11 @@ export function LandingView({
   selectedIngredients,
   selectedFlavors,
   customIngredientInput,
-  selectedAlcoholStrength,
   selectedVibe,
   specialRequests,
   toggleIngredient,
   toggleFlavor,
   setCustomIngredientInput,
-  setAlcoholStrength,
   setVibe,
   updateSpecialRequests,
   userPreferences,
@@ -139,7 +135,7 @@ export function LandingView({
         ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
         customIngredients: customIngredientInput.trim() || undefined,
         flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
-        strength: selectedAlcoholStrength || userPreferences.defaultStrength,
+        strength: userPreferences.defaultStrength,
         vibe: selectedVibe || userPreferences.defaultVibe,
         specialRequests: specialRequests.trim() || undefined,
       }
@@ -288,27 +284,7 @@ export function LandingView({
             </div>
 
             {/* Quick Options */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <Label className="text-lg font-semibold mb-4 block">Alcohol Strength</Label>
-                <div className="flex flex-wrap gap-2">
-                  {ALCOHOL_STRENGTHS.map((strength) => (
-                    <Badge
-                      key={strength}
-                      variant={selectedAlcoholStrength === strength ? "default" : "outline"}
-                      className={`cursor-pointer p-2 transition-all ${
-                        selectedAlcoholStrength === strength
-                          ? "bg-purple-600 hover:bg-purple-700"
-                          : "hover:bg-purple-50 hover:border-purple-300"
-                      }`}
-                      onClick={() => setAlcoholStrength(strength)}
-                    >
-                      {strength}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
+            <div>
               <div>
                 <Label className="text-lg font-semibold mb-4 block">Vibe</Label>
                 <div className="flex flex-wrap gap-2">
