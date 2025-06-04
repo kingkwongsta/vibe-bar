@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { X, Bug, ChevronDown, ChevronUp } from "lucide-react"
+import { X, Bug, ChevronDown, ChevronUp, Zap } from "lucide-react"
 
 interface LogEntry {
   timestamp: string
@@ -16,7 +16,11 @@ interface LogEntry {
   sessionId: string
 }
 
-export function DevLogger() {
+interface DevLoggerProps {
+  onGeneratePrompt?: () => any
+}
+
+export function DevLogger({ onGeneratePrompt }: DevLoggerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [logs, setLogs] = useState<LogEntry[]>([])
   
@@ -57,6 +61,13 @@ export function DevLogger() {
     setIsOpen(!isOpen)
   }
 
+  const handleGeneratePrompt = () => {
+    if (onGeneratePrompt) {
+      const promptData = onGeneratePrompt()
+      logger.debug("LLM Prompt Generated", promptData)
+    }
+  }
+
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString()
   }
@@ -95,6 +106,18 @@ export function DevLogger() {
                 </Badge>
               </div>
               <div className="flex gap-1">
+                {onGeneratePrompt && (
+                  <Button
+                    onClick={handleGeneratePrompt}
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-xs bg-green-50 hover:bg-green-100 border-green-300"
+                    title="Generate Current LLM Prompt"
+                  >
+                    <Zap className="h-3 w-3 mr-1" />
+                    Prompt
+                  </Button>
+                )}
                 <Button
                   onClick={clearLogs}
                   variant="outline"

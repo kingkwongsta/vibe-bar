@@ -39,6 +39,7 @@ interface LandingViewProps {
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
+  prepareLLMPromptCallback?: () => any
 }
 
 export function LandingView({
@@ -60,6 +61,7 @@ export function LandingView({
   setVibe,
   updateSpecialRequests,
   userPreferences,
+  prepareLLMPromptCallback,
 }: LandingViewProps) {
   const handleAddCustomIngredient = (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,6 +77,11 @@ export function LandingView({
 
   // Function to prepare data for LLM cocktail generation
   const prepareLLMPrompt = () => {
+    if (prepareLLMPromptCallback) {
+      return prepareLLMPromptCallback()
+    }
+    
+    // Fallback to original logic if callback not provided
     const allIngredients = [...selectedIngredients, ...customIngredients]
     const prompt = {
       ingredients: allIngredients.length > 0 ? allIngredients : userPreferences.baseSpirits,

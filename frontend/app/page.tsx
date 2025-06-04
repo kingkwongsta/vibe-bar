@@ -34,6 +34,28 @@ export default function VibeBarApp() {
 
   const { preferences } = useUserPreferences()
 
+  // Function to prepare LLM prompt data - mirrors the logic from LandingView
+  const prepareLLMPrompt = () => {
+    const allIngredients = [...selectedIngredients, ...customIngredients]
+    const prompt = {
+      ingredients: allIngredients.length > 0 ? allIngredients : preferences.baseSpirits,
+      flavors: selectedFlavors.length > 0 ? selectedFlavors : preferences.flavorProfiles,
+      strength: selectedAlcoholStrength || preferences.defaultStrength,
+      vibe: selectedVibe || preferences.defaultVibe,
+      dietaryRestrictions: preferences.dietaryRestrictions,
+      specialRequests: specialRequests.trim() || undefined,
+      userContext: {
+        preferredSpirits: preferences.baseSpirits,
+        preferredFlavors: preferences.flavorProfiles,
+        preferredVibes: preferences.preferredVibes,
+        restrictions: preferences.dietaryRestrictions
+      }
+    }
+    
+    console.log("LLM Prompt Data:", prompt)
+    return prompt
+  }
+
   // Function to render the appropriate view based on currentView
   const renderCurrentView = () => {
     switch (currentView) {
@@ -58,6 +80,7 @@ export default function VibeBarApp() {
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
+            prepareLLMPromptCallback={prepareLLMPrompt}
           />
         )
       
@@ -94,6 +117,7 @@ export default function VibeBarApp() {
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
+            prepareLLMPromptCallback={prepareLLMPrompt}
           />
         )
     }
@@ -104,7 +128,7 @@ export default function VibeBarApp() {
       {renderCurrentView()}
       
       {/* Development logger - only shows in dev mode */}
-      <DevLogger />
+      <DevLogger onGeneratePrompt={prepareLLMPrompt} />
     </div>
   )
 }
