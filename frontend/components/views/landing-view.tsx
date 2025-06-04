@@ -242,12 +242,12 @@ export function LandingView({
             <div>
               <Label className="text-lg font-semibold mb-4 block">Add custom ingredients</Label>
               <div className="space-y-2">
-                <Textarea
+                <Input
                   placeholder="e.g., Aperol, Elderflower Liqueur, Angostura Bitters"
                   value={customIngredientInput}
                   onChange={(e) => handleCustomIngredientsChange(e.target.value)}
-                  className={`min-h-[100px] resize-none ${getError('customIngredient') ? 'border-red-500' : ''}`}
-                  maxLength={300}
+                  className={getError('customIngredient') ? 'border-red-500' : ''}
+                  maxLength={100}
                 />
                 <div className="flex justify-between items-center">
                   {getError('customIngredient') ? (
@@ -259,7 +259,7 @@ export function LandingView({
                     <div />
                   )}
                   <span className="text-xs text-gray-500">
-                    {customIngredientInput.length}/300
+                    {customIngredientInput.length}/100
                   </span>
                 </div>
               </div>
@@ -340,12 +340,12 @@ export function LandingView({
             <div>
               <Label className="text-lg font-semibold mb-4 block">Special Requests</Label>
               <div className="space-y-2">
-                <Textarea
+                <Input
                   placeholder="Any special dietary restrictions, preferences, or requests?"
                   value={specialRequests}
                   onChange={(e) => handleSpecialRequestsChange(e.target.value)}
-                  className={`min-h-[100px] resize-none ${getError('specialRequests') ? 'border-red-500' : ''}`}
-                  maxLength={500}
+                  className={getError('specialRequests') ? 'border-red-500' : ''}
+                  maxLength={100}
                 />
                 <div className="flex justify-between items-center">
                   {getError('specialRequests') ? (
@@ -357,7 +357,7 @@ export function LandingView({
                     <div />
                   )}
                   <span className="text-xs text-gray-500">
-                    {specialRequests.length}/500
+                    {specialRequests.length}/100
                   </span>
                 </div>
               </div>
