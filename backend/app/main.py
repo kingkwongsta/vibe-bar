@@ -1,6 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from datetime import datetime, UTC
+
+# Import our models
+from app.models import (
+    VibeCreate, VibeResponse, VibeCategory, VibeIntensity,
+    MoodCreate, MoodResponse, MoodType, EmotionalState,
+    APIResponse, HealthCheck
+)
 
 # Create FastAPI app
 app = FastAPI(
@@ -26,35 +34,108 @@ app.add_middleware(
 )
 
 # Root endpoint
-@app.get("/")
+@app.get("/", response_model=APIResponse)
 async def root():
     """API root endpoint"""
-    return {
-        "message": "Welcome to Vibe Bar API",
-        "version": "0.1.0",
-        "status": "running",
-        "docs": "/docs"
-    }
+    return APIResponse(
+        message="Welcome to Vibe Bar API",
+        data={
+            "version": "0.1.0",
+            "status": "running",
+            "docs": "/docs",
+            "phase": "3 - Basic Pydantic Models Added"
+        }
+    )
 
 # Health check endpoint
-@app.get("/health")
+@app.get("/health", response_model=HealthCheck)
 async def health_check():
-    """Basic health check endpoint"""
-    return {
-        "status": "healthy",
-        "service": "vibe-bar-api",
-        "cors_enabled": True
-    }
+    """Enhanced health check endpoint using Pydantic models"""
+    return HealthCheck(
+        service="vibe-bar-api",
+        version="0.1.0",
+        dependencies={
+            "pydantic": True,
+            "fastapi": True
+        }
+    )
 
 # Test endpoint for frontend connectivity
-@app.get("/api/test")
+@app.get("/api/test", response_model=APIResponse)
 async def test_endpoint():
     """Test endpoint to verify frontend can reach backend"""
-    return {
-        "message": "Backend is reachable from frontend!",
-        "timestamp": "2024-12-19",
-        "cors_working": True
-    }
+    return APIResponse(
+        message="Backend is reachable from frontend!",
+        data={
+            "timestamp": datetime.now(UTC).isoformat(),
+            "cors_working": True,
+            "models_loaded": True
+        }
+    )
+
+# Example vibe endpoints (will be expanded in future phases)
+@app.post("/api/vibes", response_model=APIResponse)
+async def create_vibe_example(vibe: VibeCreate):
+    """Example endpoint for creating a vibe - demonstrates model validation"""
+    # This is just a mock response for now
+    mock_vibe = VibeResponse(
+        id=1,
+        title=vibe.title,
+        description=vibe.description,
+        category=vibe.category,
+        intensity=vibe.intensity,
+        mood_score=vibe.mood_score,
+        tags=vibe.tags,
+        created_at=datetime.now(UTC)
+    )
+    
+    return APIResponse(
+        message="Vibe created successfully (mock)",
+        data=mock_vibe.model_dump()
+    )
+
+@app.get("/api/vibes/categories", response_model=APIResponse)
+async def get_vibe_categories():
+    """Get available vibe categories"""
+    return APIResponse(
+        message="Vibe categories retrieved",
+        data={
+            "categories": [category.value for category in VibeCategory],
+            "intensities": [intensity.value for intensity in VibeIntensity]
+        }
+    )
+
+# Example mood endpoints (will be expanded in future phases)
+@app.post("/api/moods", response_model=APIResponse)
+async def create_mood_example(mood: MoodCreate):
+    """Example endpoint for creating a mood entry - demonstrates model validation"""
+    # This is just a mock response for now
+    mock_mood = MoodResponse(
+        id=1,
+        primary_mood=mood.primary_mood,
+        secondary_moods=mood.secondary_moods,
+        emotional_state=mood.emotional_state,
+        energy_level=mood.energy_level,
+        stress_level=mood.stress_level,
+        notes=mood.notes,
+        created_at=datetime.now(UTC)
+    )
+    
+    return APIResponse(
+        message="Mood entry created successfully (mock)",
+        data=mock_mood.model_dump()
+    )
+
+@app.get("/api/moods/types", response_model=APIResponse)
+async def get_mood_types():
+    """Get available mood types and emotional states"""
+    return APIResponse(
+        message="Mood types retrieved",
+        data={
+            "mood_types": [mood_type.value for mood_type in MoodType],
+            "emotional_states": [state.value for state in EmotionalState]
+        }
+    )
 
 if __name__ == "__main__":
     import uvicorn
