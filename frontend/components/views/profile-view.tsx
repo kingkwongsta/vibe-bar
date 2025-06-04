@@ -9,10 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { NavigationBar } from "@/components/layout/navigation-bar"
+import { useUserPreferences } from "@/hooks/use-user-preferences"
+import { SPIRITS, FLAVOR_PROFILES, VIBES } from "@/lib/constants"
 import {
   Settings,
 } from "lucide-react"
 import type { ViewType } from "@/lib/types"
+import { useState } from "react"
 
 interface ProfileViewProps {
   currentView: ViewType
@@ -20,6 +23,48 @@ interface ProfileViewProps {
 }
 
 export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
+  const {
+    preferences,
+    isLoading,
+    toggleBaseSpirit,
+    toggleFlavorProfile,
+    setDefaultStrength,
+    toggleDietaryRestriction,
+    setDefaultVibe,
+    togglePreferredVibe,
+    saveAllPreferences,
+    resetToDefaults
+  } = useUserPreferences()
+
+  const [additionalRestrictions, setAdditionalRestrictions] = useState("")
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle")
+
+  const handleSavePreferences = async () => {
+    setSaveStatus("saving")
+    const success = saveAllPreferences()
+    if (success) {
+      setSaveStatus("saved")
+      setTimeout(() => setSaveStatus("idle"), 2000)
+    } else {
+      setSaveStatus("error")
+      setTimeout(() => setSaveStatus("idle"), 3000)
+    }
+  }
+
+  const handleResetToDefaults = () => {
+    resetToDefaults()
+    setAdditionalRestrictions("")
+    setSaveStatus("idle")
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 flex items-center justify-center">
+        <div className="text-lg">Loading preferences...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
@@ -68,13 +113,16 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                 <div>
                   <Label className="text-sm font-medium mb-3 block">Preferred Base Spirits</Label>
                   <div className="flex flex-wrap gap-2">
-                    {["Gin", "Tequila", "Whiskey", "Rum", "Vodka"].map((spirit) => (
+                    {SPIRITS.map((spirit) => (
                       <Badge
                         key={spirit}
-                        variant={["Gin", "Tequila"].includes(spirit) ? "default" : "outline"}
-                        className={`cursor-pointer p-2 ${
-                          ["Gin", "Tequila"].includes(spirit) ? "bg-amber-600 hover:bg-amber-700" : "hover:bg-amber-50"
+                        variant={preferences.baseSpirits.includes(spirit) ? "default" : "outline"}
+                        className={`cursor-pointer p-2 transition-all ${
+                          preferences.baseSpirits.includes(spirit) 
+                            ? "bg-amber-600 hover:bg-amber-700" 
+                            : "hover:bg-amber-50 hover:border-amber-300"
                         }`}
+                        onClick={() => toggleBaseSpirit(spirit)}
                       >
                         {spirit}
                       </Badge>
@@ -85,15 +133,16 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                 <div>
                   <Label className="text-sm font-medium mb-3 block">Favorite Flavor Profiles</Label>
                   <div className="flex flex-wrap gap-2">
-                    {["Citrusy", "Herbal", "Fruity", "Spicy"].map((flavor) => (
+                    {FLAVOR_PROFILES.map((flavor) => (
                       <Badge
                         key={flavor}
-                        variant={["Citrusy", "Herbal"].includes(flavor) ? "default" : "outline"}
-                        className={`cursor-pointer p-2 ${
-                          ["Citrusy", "Herbal"].includes(flavor)
+                        variant={preferences.flavorProfiles.includes(flavor) ? "default" : "outline"}
+                        className={`cursor-pointer p-2 transition-all ${
+                          preferences.flavorProfiles.includes(flavor)
                             ? "bg-orange-500 hover:bg-orange-600"
-                            : "hover:bg-orange-50"
+                            : "hover:bg-orange-50 hover:border-orange-300"
                         }`}
+                        onClick={() => toggleFlavorProfile(flavor)}
                       >
                         {flavor}
                       </Badge>
@@ -104,7 +153,7 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                 <div className="grid md:grid-cols-1 gap-4">
                   <div>
                     <Label className="text-sm font-medium mb-2 block">Default Strength</Label>
-                    <Select defaultValue="medium">
+                    <Select value={preferences.defaultStrength} onValueChange={setDefaultStrength}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -127,13 +176,17 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   {[
-                    { id: "gluten", label: "Gluten-free", checked: true },
-                    { id: "dairy", label: "Dairy-free", checked: false },
-                    { id: "vegan", label: "Vegan", checked: false },
-                    { id: "nuts", label: "Nut allergies", checked: false },
+                    { id: "gluten-free", label: "Gluten-free" },
+                    { id: "dairy-free", label: "Dairy-free" },
+                    { id: "vegan", label: "Vegan" },
+                    { id: "nut-allergies", label: "Nut allergies" },
                   ].map((restriction) => (
                     <div key={restriction.id} className="flex items-center space-x-2">
-                      <Checkbox id={restriction.id} defaultChecked={restriction.checked} />
+                      <Checkbox 
+                        id={restriction.id} 
+                        checked={preferences.dietaryRestrictions.includes(restriction.id)}
+                        onCheckedChange={() => toggleDietaryRestriction(restriction.id)}
+                      />
                       <Label htmlFor={restriction.id}>{restriction.label}</Label>
                     </div>
                   ))}
@@ -144,15 +197,69 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
                   <Textarea
                     placeholder="e.g., No cilantro, avoid overly sweet drinks, prefer natural ingredients..."
                     className="resize-none"
-                    defaultValue="No cilantro please - it tastes like soap to me!"
+                    value={additionalRestrictions}
+                    onChange={(e) => setAdditionalRestrictions(e.target.value)}
                   />
                 </div>
               </CardContent>
             </Card>
 
+            <Card className="bg-white/90 backdrop-blur-sm border-0">
+              <CardHeader>
+                <CardTitle>Vibe Preferences</CardTitle>
+                <CardDescription>Set your default vibe and preferred vibes</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Default Vibe</Label>
+                  <Select value={preferences.defaultVibe} onValueChange={setDefaultVibe}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {VIBES.map((vibe) => (
+                        <SelectItem key={vibe} value={vibe}>{vibe}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Preferred Vibes</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {VIBES.map((vibe) => (
+                      <Badge
+                        key={vibe}
+                        variant={preferences.preferredVibes.includes(vibe) ? "default" : "outline"}
+                        className={`cursor-pointer p-2 transition-all ${
+                          preferences.preferredVibes.includes(vibe)
+                            ? "bg-purple-500 hover:bg-purple-600"
+                            : "hover:bg-purple-50 hover:border-purple-300"
+                        }`}
+                        onClick={() => togglePreferredVibe(vibe)}
+                      >
+                        {vibe}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="flex gap-3">
-              <Button className="flex-1">Save Preferences</Button>
-              <Button variant="outline">Reset to Defaults</Button>
+              <Button 
+                className="flex-1" 
+                onClick={handleSavePreferences}
+                disabled={saveStatus === "saving"}
+              >
+                {saveStatus === "saving" && "Saving..."}
+                {saveStatus === "saved" && "Saved!"}
+                {saveStatus === "error" && "Error - Try Again"}
+                {saveStatus === "idle" && "Save Preferences"}
+              </Button>
+              <Button variant="outline" onClick={handleResetToDefaults}>
+                Reset to Defaults
+              </Button>
             </div>
           </div>
         </div>

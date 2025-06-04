@@ -10,7 +10,7 @@ export interface Recipe {
 export interface CocktailFormData {
   selectedIngredients: string[]
   selectedFlavors: string[]
-  customIngredients?: string[]
+  customIngredients?: string
   strength?: string
   occasion?: string
   specialRequests?: string
@@ -30,4 +30,14 @@ export interface UserPreferences {
   flavorProfiles: string[]
   defaultStrength: string
   dietaryRestrictions: string[]
-} 
+  defaultVibe: string
+  preferredVibes: string[]
+}
+
+export interface Vibe {
+  id: string
+  name: string
+  description?: string
+  mood: string
+  icon?: string
+}

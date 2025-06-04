@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
+import { useFormValidation } from "@/hooks/use-form-validation"
 import {
   Sparkles,
   ChefHat,
@@ -16,12 +18,11 @@ import {
   Zap,
   Plus,
   X,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react"
-import { INGREDIENTS, FLAVOR_PROFILES } from "@/lib/constants"
-import type { ViewType } from "@/lib/types"
-
-const ALCOHOL_STRENGTHS = ["Light", "Medium", "Strong", "Non-alcoholic"]
-const VIBES = ["Party", "Relaxing", "Celebration", "Date Night"]
+import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
+import type { ViewType, UserPreferences } from "@/lib/types"
 
 interface LandingViewProps {
   currentView: ViewType
@@ -32,6 +33,7 @@ interface LandingViewProps {
   customIngredientInput: string
   selectedAlcoholStrength: string | null
   selectedVibe: string | null
+  specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
   addCustomIngredient: () => void
@@ -39,6 +41,10 @@ interface LandingViewProps {
   setCustomIngredientInput: (input: string) => void
   setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
+  updateSpecialRequests: (requests: string) => void
+  userPreferences: UserPreferences
+  prepareLLMPromptCallback?: () => any
+  isFormRestored?: boolean
 }
 
 export function LandingView({
@@ -50,6 +56,7 @@ export function LandingView({
   customIngredientInput,
   selectedAlcoholStrength,
   selectedVibe,
+  specialRequests,
   toggleIngredient,
   toggleFlavor,
   addCustomIngredient,
@@ -57,22 +64,116 @@ export function LandingView({
   setCustomIngredientInput,
   setAlcoholStrength,
   setVibe,
+  updateSpecialRequests,
+  userPreferences,
+  prepareLLMPromptCallback,
+  isFormRestored = false,
 }: LandingViewProps) {
-  const handleAddCustomIngredient = (e: React.FormEvent) => {
-    e.preventDefault()
-    addCustomIngredient()
+  const {
+    validateSpecialRequestsInput,
+    validateSelectionLimitsInput,
+    validateRecipeGenerationInput,
+    getError,
+    clearError,
+  } = useFormValidation()
+
+  const handleSpecialRequestsChange = (requests: string) => {
+    const validation = validateSpecialRequestsInput(requests)
+    if (validation.isValid && validation.sanitized !== undefined) {
+      updateSpecialRequests(validation.sanitized)
+    } else {
+      updateSpecialRequests(requests) // Allow typing but show error
+    }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      addCustomIngredient()
+  const handleCustomIngredientsChange = (ingredients: string) => {
+    clearError('customIngredient')
+    const validation = validateSpecialRequestsInput(ingredients) // Use same validation pattern as special requests
+    if (!validation.isValid && validation.error) {
+      // Set custom ingredient error instead of special requests error
+      // We'll handle this through the validation directly
     }
+    setCustomIngredientInput(ingredients) // Allow typing and let validation show errors
+  }
+
+  const handleIngredientToggle = (ingredient: string) => {
+    // Clear selection limit errors when toggling
+    clearError('selectionLimits')
+    
+    const newSelectedIngredients = selectedIngredients.includes(ingredient)
+      ? selectedIngredients.filter(i => i !== ingredient)
+      : [...selectedIngredients, ingredient]
+    
+    // Validate after toggle
+    validateSelectionLimitsInput(newSelectedIngredients, selectedFlavors)
+    toggleIngredient(ingredient)
+  }
+
+  const handleFlavorToggle = (flavor: string) => {
+    // Clear selection limit errors when toggling
+    clearError('selectionLimits')
+    
+    const newSelectedFlavors = selectedFlavors.includes(flavor)
+      ? selectedFlavors.filter(f => f !== flavor)
+      : [...selectedFlavors, flavor]
+    
+    // Validate after toggle
+    validateSelectionLimitsInput(selectedIngredients, newSelectedFlavors)
+    toggleFlavor(flavor)
+  }
+
+  // Function to prepare data for LLM cocktail generation
+  const prepareLLMPrompt = () => {
+    const validation = validateRecipeGenerationInput({
+      selectedIngredients,
+      selectedFlavors,
+      customIngredients: customIngredientInput.trim() || undefined,
+    })
+    
+    if (!validation.isValid) {
+      return null // Don't proceed if validation fails
+    }
+    
+    if (prepareLLMPromptCallback) {
+      return prepareLLMPromptCallback()
+    }
+    
+    // Fallback to original logic if callback not provided
+    const prompt = {
+      ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
+      flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
+      strength: selectedAlcoholStrength || userPreferences.defaultStrength,
+      vibe: selectedVibe || userPreferences.defaultVibe,
+      dietaryRestrictions: userPreferences.dietaryRestrictions,
+      customIngredients: customIngredientInput.trim() || undefined,
+      specialRequests: specialRequests.trim() || undefined,
+      userContext: {
+        preferredSpirits: userPreferences.baseSpirits,
+        preferredFlavors: userPreferences.flavorProfiles,
+        preferredVibes: userPreferences.preferredVibes,
+        restrictions: userPreferences.dietaryRestrictions
+      }
+    }
+    
+    console.log("LLM Prompt Data:", prompt)
+    return prompt
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+
+      {/* Form Restoration Notification */}
+      {isFormRestored && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <Alert className="border-green-200 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              We've restored your previous selections. Continue where you left off!
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -89,19 +190,36 @@ export function LandingView({
           </p>
         </div>
 
+        {/* Selection Limits Error */}
+        {getError('selectionLimits') && (
+          <div className="max-w-4xl mx-auto mb-6">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{getError('selectionLimits')}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         {/* Main Generation Form */}
         <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
+          {/* <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-2xl">
               <Sparkles className="h-6 w-6 text-amber-600" />
               Mix Something Amazing
             </CardTitle>
             <CardDescription>Tell us what you have and what you're craving</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
+          </CardHeader> */}
+          <CardContent className="space-y-8 mt-4">
             {/* Available Ingredients */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">What specific ingredients do you want in your recipe?</Label>
+              <Label className="text-lg font-semibold mb-4 block">
+                Choose ingredients for your recipe? 
+                {selectedIngredients.length > 0 && (
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    ({selectedIngredients.length} selected)
+                  </span>
+                )}
+              </Label>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {INGREDIENTS.map((ingredient) => (
                   <Badge
@@ -112,7 +230,7 @@ export function LandingView({
                         ? "bg-amber-600 hover:bg-amber-700"
                         : "hover:bg-amber-50 hover:border-amber-300"
                     }`}
-                    onClick={() => toggleIngredient(ingredient)}
+                    onClick={() => handleIngredientToggle(ingredient)}
                   >
                     {ingredient}
                   </Badge>
@@ -122,19 +240,41 @@ export function LandingView({
 
             {/* Custom Ingredients Section */}
             <div>
-              {/* Custom Ingredient Input */}
-              <Input
-                type="text"
-                placeholder="Add custom ingredients separated by commas (e.g., Aperol, Elderflower Liqueur, Prosecco)"
-                value={customIngredientInput}
-                onChange={(e) => setCustomIngredientInput(e.target.value)}
-                className="w-full"
-              />
+              <Label className="text-lg font-semibold mb-4 block">Add additional ingredients</Label>
+              <div className="space-y-2">
+                <Input
+                  placeholder="e.g., Aperol, Elderflower Liqueur, Angostura Bitters"
+                  value={customIngredientInput}
+                  onChange={(e) => handleCustomIngredientsChange(e.target.value)}
+                  className={getError('customIngredient') ? 'border-red-500' : ''}
+                  maxLength={100}
+                />
+                <div className="flex justify-between items-center">
+                  {getError('customIngredient') ? (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {getError('customIngredient')}
+                    </p>
+                  ) : (
+                    <div />
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {customIngredientInput.length}/100
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Flavor Preferences */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">What kind of flavor profile?</Label>
+              <Label className="text-lg font-semibold mb-4 block">
+                Choose a flavor profile?
+                {selectedFlavors.length > 0 && (
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    ({selectedFlavors.length} selected)
+                  </span>
+                )}
+              </Label>
               <div className="flex flex-wrap gap-2">
                 {FLAVOR_PROFILES.map((flavor) => (
                   <Badge
@@ -145,7 +285,7 @@ export function LandingView({
                         ? "bg-orange-500 hover:bg-orange-600"
                         : "hover:bg-orange-50 hover:border-orange-300"
                     }`}
-                    onClick={() => toggleFlavor(flavor)}
+                    onClick={() => handleFlavorToggle(flavor)}
                   >
                     {flavor}
                   </Badge>
@@ -184,8 +324,8 @@ export function LandingView({
                       variant={selectedVibe === vibe ? "default" : "outline"}
                       className={`cursor-pointer p-2 transition-all ${
                         selectedVibe === vibe
-                          ? "bg-blue-600 hover:bg-blue-700"
-                          : "hover:bg-blue-50 hover:border-blue-300"
+                          ? "bg-indigo-600 hover:bg-indigo-700"
+                          : "hover:bg-indigo-50 hover:border-indigo-300"
                       }`}
                       onClick={() => setVibe(vibe)}
                     >
@@ -198,21 +338,55 @@ export function LandingView({
 
             {/* Special Requests */}
             <div>
-              <Label className="text-sm font-medium mb-2 block">Special requests or dietary restrictions</Label>
-              <Textarea
-                placeholder="e.g., No citrus, make it batch-friendly, surprise me with something unique..."
-                className="resize-none"
-              />
+              <Label className="text-lg font-semibold mb-4 block">Special Requests</Label>
+              <div className="space-y-2">
+                <Input
+                  placeholder="Any special dietary restrictions, preferences, or requests?"
+                  value={specialRequests}
+                  onChange={(e) => handleSpecialRequestsChange(e.target.value)}
+                  className={getError('specialRequests') ? 'border-red-500' : ''}
+                  maxLength={100}
+                />
+                <div className="flex justify-between items-center">
+                  {getError('specialRequests') ? (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {getError('specialRequests')}
+                    </p>
+                  ) : (
+                    <div />
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {specialRequests.length}/100
+                  </span>
+                </div>
+              </div>
             </div>
 
+            {/* Recipe Generation Error */}
+            {getError('recipeGeneration') && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{getError('recipeGeneration')}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Generate Button */}
-            <Button
-              onClick={() => setCurrentView("recipe")}
-              className="w-full bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white py-6 text-lg font-semibold"
-            >
-              <Zap className="h-5 w-5 mr-2" />
-              Create Your Cocktail Recipe
-            </Button>
+            <div className="text-center pt-4">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white px-8 py-3 text-lg font-semibold"
+                onClick={() => {
+                  const prompt = prepareLLMPrompt()
+                  if (prompt) {
+                    setCurrentView("recipe")
+                  }
+                }}
+              >
+                <Sparkles className="mr-2 h-5 w-5" />
+                Create Recipe
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
