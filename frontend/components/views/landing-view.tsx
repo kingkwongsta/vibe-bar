@@ -213,7 +213,7 @@ export function LandingView({
             {/* Available Ingredients */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
-                What specific ingredients do you want in your recipe? 
+                Choose ingredients for your recipe? 
                 {selectedIngredients.length > 0 && (
                   <span className="text-sm font-normal text-gray-500 ml-2">
                     ({selectedIngredients.length} selected)
@@ -240,7 +240,7 @@ export function LandingView({
 
             {/* Custom Ingredients Section */}
             <div>
-              <Label className="text-lg font-semibold mb-4 block">Add custom ingredients</Label>
+              <Label className="text-lg font-semibold mb-4 block">Add additional ingredients</Label>
               <div className="space-y-2">
                 <Input
                   placeholder="e.g., Aperol, Elderflower Liqueur, Angostura Bitters"
@@ -268,7 +268,7 @@ export function LandingView({
             {/* Flavor Preferences */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
-                What kind of flavor profile?
+                Choose a flavor profile?
                 {selectedFlavors.length > 0 && (
                   <span className="text-sm font-normal text-gray-500 ml-2">
                     ({selectedFlavors.length} selected)
