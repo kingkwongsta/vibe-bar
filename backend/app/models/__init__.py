@@ -1,13 +1,9 @@
 """
-Pydantic models for Vibe Bar application - focused on drink recipe generation
+Pydantic models for Vibe Bar application - focused on cocktail recipe generation
 """
 
 from .common import APIResponse, ErrorResponse, PaginationParams, FilterParams, HealthCheck
-from .drink import (
-    DrinkType, FlavorProfile, Difficulty, MoodCategory, Ingredient,
-    DrinkRecipe, DrinkRecipeCreate, DrinkRecipeResponse, DrinkGenerationRequest,
-    DrinkCustomizationRequest, DrinkRecommendationRequest, DrinkFeedback
-)
+from .cocktail import UserPreferences, CocktailRecipe, RecipeMeta, RecipeIngredient, RecipeDetail
 
 __all__ = [
     # Common models
@@ -17,21 +13,10 @@ __all__ = [
     "FilterParams",
     "HealthCheck",
     
-    # Drink models - enums
-    "DrinkType",
-    "FlavorProfile", 
-    "Difficulty",
-    "MoodCategory",
-    
-    # Drink models - core
-    "Ingredient",
-    "DrinkRecipe",
-    "DrinkRecipeCreate",
-    "DrinkRecipeResponse",
-    
-    # Drink models - requests
-    "DrinkGenerationRequest",
-    "DrinkCustomizationRequest", 
-    "DrinkRecommendationRequest",
-    "DrinkFeedback",
+    # Cocktail models
+    "UserPreferences",
+    "CocktailRecipe",
+    "RecipeMeta",
+    "RecipeIngredient", 
+    "RecipeDetail",
 ] 

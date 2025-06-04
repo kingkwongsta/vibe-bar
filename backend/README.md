@@ -1,36 +1,41 @@
-# Vibe Bar Backend - AI-Powered Drink Recipe Generator
+# Vibe Bar Backend - AI-Powered Cocktail Recipe Generator
 
-An intelligent drink recipe generation API powered by OpenRouter LLM integration. Generate personalized cocktails, mocktails, coffee drinks, teas, smoothies, and more based on mood, preferences, and context.
+An intelligent cocktail recipe generation API powered by OpenRouter LLM integration. Generate personalized cocktails and mocktails based on spirits, flavor preferences, occasions, and available ingredients.
 
-## 🍹 Features
+## 🍸 Features
 
 ### Core Functionality
-- **AI-Powered Recipe Generation**: Create unique drink recipes using advanced LLM models
-- **Mood-Based Recommendations**: Generate drinks based on user's current or desired mood
-- **Multiple Drink Types**: Cocktails, mocktails, coffee, tea, smoothies, juices, hot chocolate, kombucha
-- **Personalized Preferences**: Consider flavor profiles, dietary restrictions, skill level, and time constraints
+- **AI-Powered Cocktail Generation**: Create unique cocktail recipes using advanced LLM models
+- **Cocktail & Mocktail Support**: Generate both alcoholic cocktails and non-alcoholic mocktails
+- **Spirit-Based Creation**: Customize recipes based on preferred base spirits (gin, whiskey, rum, etc.)
+- **Occasion-Aware Recipes**: Generate cocktails appropriate for parties, date nights, celebrations, etc.
+- **Batch Cocktail Optimization**: Scale recipes for large gatherings and parties
 - **Smart Customization**: Modify existing recipes based on user feedback and preferences
 - **Food Pairing Suggestions**: AI-generated food pairing recommendations
+- **Professional Techniques**: Include proper mixing techniques and glassware suggestions
 
-### Supported Drink Types
-- 🍸 **Cocktails**: Classic and creative alcoholic beverages
-- 🥤 **Mocktails**: Sophisticated non-alcoholic alternatives  
-- ☕ **Coffee**: From simple brews to elaborate specialty drinks
-- 🍵 **Tea**: Hot and iced teas with creative combinations
-- 🥤 **Smoothies**: Healthy and delicious blended drinks
-- 🧃 **Juices**: Fresh and creative juice combinations
-- 🍫 **Hot Chocolate**: Comfort drinks and dessert beverages
-- 🍾 **Kombucha**: Fermented and health-focused drinks
+### Supported Cocktail Types
+- 🍸 **Cocktails**: Classic and creative alcoholic beverages with various base spirits
+- 🥤 **Mocktails**: Sophisticated non-alcoholic alternatives with complex flavors
 
-### Mood Categories
-- ⚡ **Energizing**: Drinks to boost energy and motivation
-- 😌 **Relaxing**: Calming and soothing beverages
-- 🎉 **Celebratory**: Festive drinks for special occasions
-- 🤗 **Comforting**: Warm and cozy comfort drinks
-- 🌊 **Refreshing**: Cool and revitalizing beverages
-- 💕 **Romantic**: Elegant drinks for intimate moments
-- 🎯 **Focus**: Drinks to enhance concentration
-- 👥 **Social**: Perfect for gatherings and parties
+### Base Spirits
+- 🥃 **Whiskey & Bourbon**: From smooth sipping to bold mixing spirits
+- 🍸 **Gin**: Classic London dry to contemporary botanical blends
+- 🥃 **Rum**: Light, dark, spiced, and aged varieties
+- 🌵 **Tequila & Mezcal**: Agave-based spirits for unique flavor profiles
+- 🥃 **Vodka**: Clean and neutral base for fruit-forward cocktails
+- 🍷 **Brandy**: Sophisticated spirit for elegant cocktails
+
+### Occasion Categories
+- 🎉 **Party**: Fun, easy-to-make crowd-pleasers
+- 💕 **Date Night**: Romantic and sophisticated cocktails
+- 😌 **Relaxing**: Smooth, calming evening drinks
+- 🎊 **Celebration**: Festive cocktails for special occasions
+- 🍽️ **Aperitif**: Light, appetite-stimulating pre-dinner drinks
+- 🍫 **Digestif**: Rich, settling after-dinner cocktails
+- ☀️ **Summer**: Refreshing warm-weather cocktails
+- ❄️ **Winter**: Warming, cozy cold-weather drinks
+- 🥂 **Brunch**: Morning and afternoon appropriate cocktails
 
 ## 🚀 Quick Start
 
@@ -69,7 +74,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 6. **Test the setup**:
 ```bash
-python test_drink_generation.py
+python test_cocktail_generation.py
 ```
 
 ## 🔧 Configuration
@@ -103,48 +108,56 @@ FRONTEND_URL=http://localhost:3000
 
 ## 📡 API Endpoints
 
-### Core Drink Generation
+### Core Cocktail Generation
 
-#### Generate Drink Recipe
+#### Generate Cocktail Recipe
 ```http
-POST /api/drinks/generate
+POST /api/cocktails/generate
 ```
 
-Generate a custom drink recipe based on preferences:
+Generate a custom cocktail recipe based on preferences:
 
 ```json
 {
-  "mood": "energizing",
-  "drink_type": "coffee", 
-  "flavor_preferences": ["sweet", "creamy"],
-  "time_of_day": "morning",
-  "difficulty_preference": "easy",
-  "custom_request": "I need something to wake me up and start my productive day"
+  "base_spirit": "gin",
+  "cocktail_type": "cocktail", 
+  "flavor_preferences": ["herbal", "citrusy"],
+  "strength": "medium",
+  "occasion": "date_night",
+  "difficulty_preference": "medium",
+  "custom_request": "A sophisticated gin cocktail with classic appeal"
 }
 ```
 
 #### Quick Generate
 ```http
-POST /api/drinks/quick-generate
+POST /api/cocktails/quick-generate
 ```
 
-Simplified endpoint for quick recipe generation with minimal input.
+Simplified endpoint for quick cocktail generation with minimal input.
 
 #### Get Recommendations
 ```http
-POST /api/drinks/recommendations
+POST /api/cocktails/recommendations
 ```
 
-Get 3 personalized drink recommendations based on user history and preferences.
+Get 3 personalized cocktail recommendations based on user preferences and bar inventory.
+
+#### Batch Cocktails
+```http
+POST /api/cocktails/batch
+```
+
+Generate cocktail recipes optimized for batch preparation (parties, events).
 
 ### Helper Endpoints
 
 #### Get Available Options
 ```http
-GET /api/drinks/options
+GET /api/cocktails/options
 ```
 
-Returns all available drink types, flavors, moods, and difficulty levels.
+Returns all available spirits, flavors, occasions, and difficulty levels.
 
 #### Health Check
 ```http
@@ -155,52 +168,66 @@ Check if the AI service is working properly.
 
 ### Example Requests
 
-#### Energizing Morning Coffee
+#### Classic Gin Cocktail
 ```json
 {
-  "mood": "energizing",
-  "drink_type": "coffee",
-  "flavor_preferences": ["sweet", "creamy"],
-  "time_of_day": "morning",
-  "custom_request": "I need something to wake me up"
+  "base_spirit": "gin",
+  "flavor_preferences": ["herbal", "citrusy"],
+  "strength": "medium",
+  "difficulty_preference": "medium",
+  "custom_request": "Something classic but with a modern twist"
 }
 ```
 
-#### Relaxing Evening Tea
+#### Party Batch Cocktail
 ```json
 {
-  "mood": "relaxing", 
-  "drink_type": "tea",
-  "flavor_preferences": ["herbal", "floral"],
-  "time_of_day": "evening",
-  "temperature_preference": "hot"
+  "base_spirit": "vodka",
+  "cocktail_type": "cocktail",
+  "flavor_preferences": ["fruity", "refreshing"],
+  "occasion": "party",
+  "batch_size": 8,
+  "custom_request": "Easy to make in large quantities"
 }
 ```
 
-#### Celebratory Cocktail
+#### Romantic Mocktail
 ```json
 {
-  "mood": "celebratory",
-  "drink_type": "cocktail", 
-  "flavor_preferences": ["fruity", "tropical"],
-  "occasion": "birthday party",
-  "difficulty_preference": "medium"
+  "cocktail_type": "mocktail",
+  "flavor_preferences": ["floral", "sweet"],
+  "occasion": "date_night",
+  "strength": "none",
+  "custom_request": "Something elegant and romantic for a special evening"
+}
+```
+
+#### Summer Refresher
+```json
+{
+  "base_spirit": "rum",
+  "flavor_preferences": ["tropical", "citrusy"],
+  "occasion": "summer",
+  "strength": "light",
+  "custom_request": "Perfect for hot weather and outdoor gatherings"
 }
 ```
 
 ## 🧪 Testing
 
-### Run Drink Generation Tests
+### Run Cocktail Generation Tests
 ```bash
-python test_drink_generation.py
+python test_cocktail_generation.py
 ```
 
 This comprehensive test suite validates:
 - ✅ Configuration and service initialization
-- ✅ Basic drink recipe generation
-- ✅ Cocktail and mocktail generation
-- ✅ Personalized recommendations
-- ✅ Multiple drink type variety
+- ✅ Classic cocktail recipe generation (gin-based)
+- ✅ Rum cocktail generation with tropical flavors
+- ✅ Mocktail generation for non-alcoholic options
+- ✅ Personalized recommendations based on preferences
+- ✅ Batch cocktail generation for parties
+- ✅ Multiple spirit variety testing
 - ✅ Edge cases and error handling
 
 ### Run Basic OpenRouter Tests
@@ -220,16 +247,16 @@ Visit the interactive API documentation at:
 backend/
 ├── app/
 │   ├── models/
-│   │   ├── drink.py          # Drink recipe data models
+│   │   ├── cocktail.py       # Cocktail recipe data models
 │   │   ├── common.py         # Shared API models
 │   │   └── __init__.py       # Model exports
 │   ├── services/
 │   │   ├── openrouter.py     # OpenRouter LLM integration
-│   │   ├── drink_service.py  # Drink recipe generation logic
+│   │   ├── cocktail_service.py # Cocktail recipe generation logic
 │   │   └── __init__.py       # Service exports
 │   ├── config.py             # Configuration management
 │   └── main.py               # FastAPI application
-├── test_drink_generation.py  # Drink-focused test suite
+├── test_cocktail_generation.py # Cocktail-focused test suite
 ├── test_openrouter.py        # OpenRouter integration tests
 ├── requirements.txt          # Python dependencies
 ├── env.example              # Environment template
@@ -238,44 +265,47 @@ backend/
 
 ### Key Components
 
-#### DrinkRecipeService
+#### CocktailRecipeService
 The core service that handles:
-- Structured prompt creation for LLM
-- JSON response parsing and validation
-- Recipe customization and recommendations
-- Error handling and retry logic
+- Structured prompt creation for cocktail-focused LLM responses
+- JSON response parsing and validation for cocktail recipes
+- Recipe customization and personalized recommendations
+- Batch preparation optimization
+- Professional mixology technique integration
 
 #### OpenRouterService
 Manages OpenRouter API integration:
-- Multi-model support with fallback
+- Multi-model support with fallback (GPT-4o-mini → GPT-3.5-turbo)
 - Retry logic and error handling
 - Response parsing and token tracking
+- Optimized for cocktail recipe generation
 
 #### Data Models
 Comprehensive Pydantic models for:
-- Recipe ingredients and instructions
-- User preferences and requests
+- Cocktail ingredients, techniques, and instructions
+- Base spirits, flavor profiles, and strength levels
+- User preferences and bar inventory
 - API responses and error handling
 
 ## 🎯 Use Cases
 
-### Personal Use
-- **Morning Routine**: Generate energizing coffee or tea recipes
-- **Evening Wind-down**: Create relaxing herbal teas or warm drinks
-- **Healthy Living**: Get nutritious smoothie and juice recipes
-- **Skill Building**: Learn new cocktail techniques with guided recipes
+### Home Bartending
+- **Spirit Exploration**: Discover new cocktails based on available spirits
+- **Skill Development**: Progress from easy to advanced cocktail techniques
+- **Bar Inventory**: Generate recipes using available ingredients
+- **Occasion Planning**: Create appropriate cocktails for different events
 
 ### Entertainment
-- **Party Planning**: Generate themed cocktails for events
-- **Date Nights**: Create romantic drink recipes for two
-- **Seasonal Celebrations**: Get holiday-appropriate beverages
-- **Creative Exploration**: Discover unique flavor combinations
+- **Party Planning**: Generate batch cocktails for large gatherings
+- **Date Nights**: Create romantic and sophisticated cocktail experiences
+- **Seasonal Celebrations**: Get holiday and season-appropriate recipes
+- **Creative Exploration**: Discover unique flavor combinations and techniques
 
 ### Professional Use
-- **Bartenders**: Generate creative cocktail ideas
-- **Café Owners**: Develop signature drink menus
-- **Food Bloggers**: Create content around beverage recipes
-- **Nutritionists**: Design healthy drink recommendations
+- **Bartenders**: Generate creative cocktail ideas and variations
+- **Restaurant/Bar Owners**: Develop signature cocktail menus
+- **Food Bloggers**: Create content around cocktail recipes and pairings
+- **Event Planners**: Design cocktail programs for special events
 
 ## 🔬 Technology Stack
 
@@ -290,30 +320,33 @@ Comprehensive Pydantic models for:
 
 ### ✅ Completed Features
 - [x] OpenRouter LLM integration with retry logic
-- [x] Comprehensive drink recipe data models
-- [x] AI-powered recipe generation with structured prompts
-- [x] Multiple drink type support (8+ categories)
-- [x] Mood-based recipe recommendations
+- [x] Comprehensive cocktail recipe data models
+- [x] AI-powered cocktail generation with mixologist prompts
+- [x] Multiple base spirit support (8+ categories)
+- [x] Occasion-based recipe recommendations
 - [x] Personalized preference handling
 - [x] Food pairing suggestions
+- [x] Batch cocktail optimization
+- [x] Professional technique integration
 - [x] Comprehensive testing suite
 - [x] API documentation and examples
 
 ### 🔄 Future Enhancements
 - [ ] Recipe persistence and user favorites
-- [ ] Image generation for drink recipes
-- [ ] Nutritional information calculation
-- [ ] Integration with ingredient databases
-- [ ] User authentication and profiles
+- [ ] Cocktail image generation
+- [ ] Nutritional and alcohol content calculation
+- [ ] Integration with ingredient and spirit databases
+- [ ] User authentication and cocktail collections
 - [ ] Recipe rating and feedback system
-- [ ] Seasonal and trending recipe suggestions
+- [ ] Seasonal and trending cocktail suggestions
+- [ ] My Bar inventory management
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
 3. Make your changes and add tests
-4. Ensure all tests pass: `python test_drink_generation.py`
+4. Ensure all tests pass: `python test_cocktail_generation.py`
 5. Submit a pull request
 
 ## 📄 License
@@ -329,4 +362,4 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ---
 
-🍹 **Happy drink making with Vibe Bar!** Generate the perfect beverage for any mood, moment, or occasion. 
+🍸 **Happy cocktail making with Vibe Bar!** Generate the perfect cocktail for any spirit, occasion, or mood. 
