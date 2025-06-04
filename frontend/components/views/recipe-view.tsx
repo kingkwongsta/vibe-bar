@@ -22,9 +22,16 @@ interface RecipeViewProps {
   currentView: ViewType
   setCurrentView: (view: ViewType) => void
   generatedRecipe: CocktailRecipe | null
+  resetForm: () => void
 }
 
-export function RecipeView({ currentView, setCurrentView, generatedRecipe }: RecipeViewProps) {
+export function RecipeView({ currentView, setCurrentView, generatedRecipe, resetForm }: RecipeViewProps) {
+  // Handler for back to recipe creator that resets form
+  const handleBackToRecipeCreator = () => {
+    resetForm()
+    setCurrentView("landing")
+  }
+
   // If no recipe is generated, show a message
   if (!generatedRecipe) {
     return (
@@ -33,7 +40,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe }: Rec
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => setCurrentView("landing")} className="mb-4">
+            <Button variant="ghost" onClick={handleBackToRecipeCreator} className="mb-4">
               ← Back to Recipe Creator
             </Button>
           </div>
@@ -46,7 +53,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe }: Rec
                 <p className="text-gray-600 mb-6">
                   It looks like you haven&apos;t generated a recipe yet. Go back to the recipe creator to make your perfect cocktail!
                 </p>
-                <Button onClick={() => setCurrentView("landing")} className="bg-amber-600 hover:bg-amber-700">
+                <Button onClick={handleBackToRecipeCreator} className="bg-amber-600 hover:bg-amber-700">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Create a Recipe
                 </Button>
@@ -71,7 +78,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe }: Rec
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => setCurrentView("landing")} className="mb-4">
+          <Button variant="ghost" onClick={handleBackToRecipeCreator} className="mb-4">
             ← Back to Recipe Creator
           </Button>
         </div>
@@ -155,7 +162,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe }: Rec
                 <Star className="h-4 w-4 mr-2" />
                 Rate Recipe
               </Button>
-              <Button variant="outline" onClick={() => setCurrentView("landing")}>
+              <Button variant="outline" onClick={handleBackToRecipeCreator}>
                 <Zap className="h-4 w-4 mr-2" />
                 Generate Another
               </Button>

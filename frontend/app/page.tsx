@@ -86,7 +86,7 @@ export default function VibeBarApp() {
         )
       
       case "recipe":
-        return <RecipeView currentView={currentView} setCurrentView={setCurrentView} generatedRecipe={generatedRecipe} />
+        return <RecipeView currentView={currentView} setCurrentView={setCurrentView} generatedRecipe={generatedRecipe} resetForm={resetForm} />
       
       case "saved":
         return <SavedRecipesView currentView={currentView} setCurrentView={setCurrentView} />
