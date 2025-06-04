@@ -202,14 +202,14 @@ export function LandingView({
 
         {/* Main Generation Form */}
         <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
+          {/* <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-2xl">
               <Sparkles className="h-6 w-6 text-amber-600" />
               Mix Something Amazing
             </CardTitle>
             <CardDescription>Tell us what you have and what you're craving</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
+          </CardHeader> */}
+          <CardContent className="space-y-8 mt-4">
             {/* Available Ingredients */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
@@ -384,7 +384,7 @@ export function LandingView({
                 }}
               >
                 <Sparkles className="mr-2 h-5 w-5" />
-                Generate My Cocktail
+                Create Recipe
               </Button>
             </div>
           </CardContent>
