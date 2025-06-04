@@ -24,6 +24,7 @@ ENV/
 .env/
 env.bak/
 venv.bak/
+backend/venv/
 pyvenv.cfg
 
 # IDE and Editor files
