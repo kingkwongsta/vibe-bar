@@ -217,12 +217,7 @@ export function LandingView({
             {/* Available Ingredients */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
-                Choose ingredients for your recipe? 
-                {selectedIngredients.length > 0 && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    ({selectedIngredients.length} selected)
-                  </span>
-                )}
+                Choose ingredients for your recipe?
               </Label>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {INGREDIENTS.map((ingredient) => (
@@ -273,11 +268,6 @@ export function LandingView({
             <div>
               <Label className="text-lg font-semibold mb-4 block">
                 Choose a flavor profile?
-                {selectedFlavors.length > 0 && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    ({selectedFlavors.length} selected)
-                  </span>
-                )}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {FLAVOR_PROFILES.map((flavor) => (
