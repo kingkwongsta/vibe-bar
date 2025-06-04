@@ -28,6 +28,8 @@ export default function VibeBarApp() {
     setAlcoholStrength,
     setVibe,
     updateSpecialRequests,
+    generatedRecipe,
+    setGeneratedRecipe,
     getFormData,
     resetForm,
     isFormRestored,
@@ -67,27 +69,24 @@ export default function VibeBarApp() {
             setCurrentView={setCurrentView}
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
-            customIngredients={customIngredients}
             customIngredientInput={customIngredientInput}
             selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
-            addCustomIngredient={addCustomIngredient}
-            removeCustomIngredient={removeCustomIngredient}
             setCustomIngredientInput={setCustomIngredientInput}
             setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
-            prepareLLMPromptCallback={prepareLLMPrompt}
+            setGeneratedRecipe={setGeneratedRecipe}
             isFormRestored={isFormRestored}
           />
         )
       
       case "recipe":
-        return <RecipeView currentView={currentView} setCurrentView={setCurrentView} />
+        return <RecipeView currentView={currentView} setCurrentView={setCurrentView} generatedRecipe={generatedRecipe} resetForm={resetForm} />
       
       case "saved":
         return <SavedRecipesView currentView={currentView} setCurrentView={setCurrentView} />
@@ -105,21 +104,18 @@ export default function VibeBarApp() {
             setCurrentView={setCurrentView}
             selectedIngredients={selectedIngredients}
             selectedFlavors={selectedFlavors}
-            customIngredients={customIngredients}
             customIngredientInput={customIngredientInput}
             selectedAlcoholStrength={selectedAlcoholStrength}
             selectedVibe={selectedVibe}
             specialRequests={specialRequests}
             toggleIngredient={toggleIngredient}
             toggleFlavor={toggleFlavor}
-            addCustomIngredient={addCustomIngredient}
-            removeCustomIngredient={removeCustomIngredient}
             setCustomIngredientInput={setCustomIngredientInput}
             setAlcoholStrength={setAlcoholStrength}
             setVibe={setVibe}
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
-            prepareLLMPromptCallback={prepareLLMPrompt}
+            setGeneratedRecipe={setGeneratedRecipe}
             isFormRestored={isFormRestored}
           />
         )

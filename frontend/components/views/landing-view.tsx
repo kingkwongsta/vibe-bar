@@ -1,25 +1,21 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
+import { generateCocktailRecipe } from "@/lib/api"
+import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
+import { useState } from "react"
 import {
   Sparkles,
-  ChefHat,
-  Users,
-  Star,
-  Zap,
-  Plus,
-  X,
   AlertCircle,
   CheckCircle,
+  Loader2,
 } from "lucide-react"
 import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
 import type { ViewType, UserPreferences } from "@/lib/types"
@@ -29,21 +25,18 @@ interface LandingViewProps {
   setCurrentView: (view: ViewType) => void
   selectedIngredients: string[]
   selectedFlavors: string[]
-  customIngredients: string[]
   customIngredientInput: string
   selectedAlcoholStrength: string | null
   selectedVibe: string | null
   specialRequests: string
   toggleIngredient: (ingredient: string) => void
   toggleFlavor: (flavor: string) => void
-  addCustomIngredient: () => void
-  removeCustomIngredient: (ingredient: string) => void
   setCustomIngredientInput: (input: string) => void
   setAlcoholStrength: (strength: string) => void
   setVibe: (vibe: string) => void
   updateSpecialRequests: (requests: string) => void
   userPreferences: UserPreferences
-  prepareLLMPromptCallback?: () => any
+  setGeneratedRecipe: (recipe: CocktailRecipe) => void
   isFormRestored?: boolean
 }
 
@@ -52,23 +45,23 @@ export function LandingView({
   setCurrentView,
   selectedIngredients,
   selectedFlavors,
-  customIngredients,
   customIngredientInput,
   selectedAlcoholStrength,
   selectedVibe,
   specialRequests,
   toggleIngredient,
   toggleFlavor,
-  addCustomIngredient,
-  removeCustomIngredient,
   setCustomIngredientInput,
   setAlcoholStrength,
   setVibe,
   updateSpecialRequests,
   userPreferences,
-  prepareLLMPromptCallback,
+  setGeneratedRecipe,
   isFormRestored = false,
 }: LandingViewProps) {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+
   const {
     validateSpecialRequestsInput,
     validateSelectionLimitsInput,
@@ -122,8 +115,12 @@ export function LandingView({
     toggleFlavor(flavor)
   }
 
-  // Function to prepare data for LLM cocktail generation
-  const prepareLLMPrompt = () => {
+  // Function to handle recipe generation via API
+  const handleGenerateRecipe = async () => {
+    // Clear any previous errors
+    setApiError(null)
+    
+    // Validate form inputs
     const validation = validateRecipeGenerationInput({
       selectedIngredients,
       selectedFlavors,
@@ -131,32 +128,39 @@ export function LandingView({
     })
     
     if (!validation.isValid) {
-      return null // Don't proceed if validation fails
+      return // Validation errors will be displayed by the form validation hook
     }
-    
-    if (prepareLLMPromptCallback) {
-      return prepareLLMPromptCallback()
-    }
-    
-    // Fallback to original logic if callback not provided
-    const prompt = {
-      ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
-      flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
-      strength: selectedAlcoholStrength || userPreferences.defaultStrength,
-      vibe: selectedVibe || userPreferences.defaultVibe,
-      dietaryRestrictions: userPreferences.dietaryRestrictions,
-      customIngredients: customIngredientInput.trim() || undefined,
-      specialRequests: specialRequests.trim() || undefined,
-      userContext: {
-        preferredSpirits: userPreferences.baseSpirits,
-        preferredFlavors: userPreferences.flavorProfiles,
-        preferredVibes: userPreferences.preferredVibes,
-        restrictions: userPreferences.dietaryRestrictions
+
+    setIsGenerating(true)
+
+    try {
+      // Prepare the preferences object for the API
+      const preferences: ApiUserPreferences = {
+        ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
+        customIngredients: customIngredientInput.trim() || undefined,
+        flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
+        strength: selectedAlcoholStrength || userPreferences.defaultStrength,
+        vibe: selectedVibe || userPreferences.defaultVibe,
+        specialRequests: specialRequests.trim() || undefined,
       }
+
+      console.log('Generating recipe with preferences:', preferences)
+
+      // Call the API
+      const response = await generateCocktailRecipe(preferences)
+
+      if (response.success && response.data) {
+        setCurrentView("recipe")
+        setGeneratedRecipe(response.data)
+      } else {
+        throw new Error(response.message || 'Failed to generate recipe')
+      }
+    } catch (error) {
+      console.error('Recipe generation error:', error)
+      setApiError(error instanceof Error ? error.message : 'An unexpected error occurred')
+    } finally {
+      setIsGenerating(false)
     }
-    
-    console.log("LLM Prompt Data:", prompt)
-    return prompt
   }
 
   return (
@@ -169,7 +173,7 @@ export function LandingView({
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              We've restored your previous selections. Continue where you left off!
+              We&apos;ve restored your previous selections. Continue where you left off!
             </AlertDescription>
           </Alert>
         </div>
@@ -185,7 +189,7 @@ export function LandingView({
             </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Recipes tailored to your taste, ingredients, and mood. Discover unique drinks you'll
+            Recipes tailored to your taste, ingredients, and mood. Discover unique drinks you&apos;ll
             love.
           </p>
         </div>
@@ -371,20 +375,33 @@ export function LandingView({
               </Alert>
             )}
 
+            {/* API Error */}
+            {apiError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{apiError}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Generate Button */}
             <div className="text-center pt-4">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white px-8 py-3 text-lg font-semibold"
-                onClick={() => {
-                  const prompt = prepareLLMPrompt()
-                  if (prompt) {
-                    setCurrentView("recipe")
-                  }
-                }}
+                className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleGenerateRecipe}
+                disabled={isGenerating}
               >
-                <Sparkles className="mr-2 h-5 w-5" />
-                Create Recipe
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Generating Recipe...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Create Recipe
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
