@@ -28,7 +28,6 @@ export function useVibeBar() {
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([])
   const [customIngredients, setCustomIngredients] = useState<string[]>([])
   const [customIngredientInput, setCustomIngredientInput] = useState("")
-  const [selectedAlcoholStrength, setSelectedAlcoholStrength] = useState<string | null>(null)
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null)
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([])
   const [specialRequests, setSpecialRequests] = useState("")
@@ -42,7 +41,6 @@ export function useVibeBar() {
       selectedIngredients,
       selectedFlavors,
       customIngredients,
-      selectedAlcoholStrength,
       selectedVibe,
       dietaryRestrictions,
       specialRequests,
@@ -58,7 +56,6 @@ export function useVibeBar() {
     selectedIngredients,
     selectedFlavors,
     customIngredients,
-    selectedAlcoholStrength,
     selectedVibe,
     dietaryRestrictions,
     specialRequests,
@@ -73,7 +70,6 @@ export function useVibeBar() {
       if (savedState.selectedIngredients) setSelectedIngredients(savedState.selectedIngredients)
       if (savedState.selectedFlavors) setSelectedFlavors(savedState.selectedFlavors)
       if (savedState.customIngredients) setCustomIngredients(savedState.customIngredients)
-      if (savedState.selectedAlcoholStrength) setSelectedAlcoholStrength(savedState.selectedAlcoholStrength)
       if (savedState.selectedVibe) setSelectedVibe(savedState.selectedVibe)
       if (savedState.dietaryRestrictions) setDietaryRestrictions(savedState.dietaryRestrictions)
       if (savedState.specialRequests) setSpecialRequests(savedState.specialRequests)
@@ -152,17 +148,6 @@ export function useVibeBar() {
     logger.logPreferenceSelection('custom-ingredient', ingredient, 'deselect')
   }
 
-  const setAlcoholStrength = (strength: string) => {
-    const previousStrength = selectedAlcoholStrength
-    setSelectedAlcoholStrength(strength)
-    
-    // Log alcohol strength selection
-    logger.logPreferenceSelection('alcohol-strength', {
-      new: strength,
-      previous: previousStrength
-    }, 'change')
-  }
-
   const setVibe = (vibe: string) => {
     const previousVibe = selectedVibe
     setSelectedVibe(vibe)
@@ -207,7 +192,6 @@ export function useVibeBar() {
       selectedIngredients,
       selectedFlavors,
       customIngredients: customIngredientInput.trim() || undefined,
-      strength: selectedAlcoholStrength || undefined,
       occasion: selectedVibe || undefined,
       specialRequests: specialRequests.trim() || undefined,
     }
@@ -217,7 +201,6 @@ export function useVibeBar() {
       totalIngredients: selectedIngredients.length,
       totalFlavors: selectedFlavors.length,
       customIngredients: customIngredientInput.length,
-      alcoholStrength: selectedAlcoholStrength,
       vibe: selectedVibe,
       hasSpecialRequests: !!formData.specialRequests,
       dietaryRestrictions: dietaryRestrictions.length
@@ -233,7 +216,6 @@ export function useVibeBar() {
         ingredients: selectedIngredients.length,
         flavors: selectedFlavors.length,
         customIngredients: customIngredients.length,
-        alcoholStrength: selectedAlcoholStrength,
         vibe: selectedVibe,
         specialRequests: specialRequests.length,
         dietaryRestrictions: dietaryRestrictions.length
@@ -244,7 +226,6 @@ export function useVibeBar() {
     setSelectedFlavors([])
     setCustomIngredients([])
     setCustomIngredientInput("")
-    setSelectedAlcoholStrength(null)
     setSelectedVibe(null)
     setSpecialRequests("")
     setDietaryRestrictions([])
@@ -261,7 +242,6 @@ export function useVibeBar() {
     selectedFlavors,
     customIngredients,
     customIngredientInput,
-    selectedAlcoholStrength,
     selectedVibe,
     dietaryRestrictions,
     specialRequests,
@@ -272,7 +252,6 @@ export function useVibeBar() {
     addCustomIngredient,
     removeCustomIngredient,
     setCustomIngredientInput,
-    setAlcoholStrength,
     setVibe,
     toggleDietaryRestriction,
     updateSpecialRequests,

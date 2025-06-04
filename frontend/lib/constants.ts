@@ -5,6 +5,7 @@ export const INGREDIENTS = [
   "Tequila",
   "Whiskey",
   "Bourbon",
+  "Non-Alcoholic",
 ] as const
 
 export const FLAVOR_PROFILES = [
@@ -71,11 +72,4 @@ export const VIBES = [
   "Relaxing", 
   "Celebration",
   "Date Night",
-] as const
-
-export const ALCOHOL_STRENGTHS = [
-  "Light",
-  "Medium", 
-  "Strong",
-  "Non-alcoholic",
 ] as const 
