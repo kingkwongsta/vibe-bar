@@ -10,6 +10,7 @@ from datetime import datetime, UTC
 import httpx
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
+import time
 
 from app.config import config
 
@@ -172,100 +173,6 @@ class OpenRouterService:
                     continue
         
         raise OpenRouterError("All attempts failed with both primary and fallback models")
-    
-    async def analyze_vibe(
-        self,
-        vibe_title: str,
-        vibe_description: Optional[str] = None,
-        user_context: Optional[Dict[str, Any]] = None
-    ) -> AIResponse:
-        """
-        Analyze a vibe using AI to provide insights and suggestions.
-        
-        Args:
-            vibe_title: The title/name of the vibe
-            vibe_description: Optional detailed description
-            user_context: Optional context about the user
-        """
-        
-        # Build the analysis prompt
-        system_prompt = """You are an AI assistant specializing in emotional intelligence and mood analysis. 
-        Your role is to help users understand their vibes and provide thoughtful insights.
-        
-        When analyzing a vibe:
-        1. Identify the core emotional themes
-        2. Suggest potential activities or actions that align with this vibe
-        3. Provide encouragement and validation
-        4. Keep responses concise but meaningful (2-3 sentences)
-        5. Be warm, supportive, and non-judgmental"""
-        
-        user_prompt = f"Analyze this vibe: '{vibe_title}'"
-        if vibe_description:
-            user_prompt += f"\nDescription: {vibe_description}"
-        
-        if user_context:
-            context_parts = []
-            if user_context.get("time_of_day"):
-                context_parts.append(f"Time: {user_context['time_of_day']}")
-            if user_context.get("recent_moods"):
-                context_parts.append(f"Recent mood pattern: {user_context['recent_moods']}")
-            if context_parts:
-                user_prompt += f"\nContext: {', '.join(context_parts)}"
-        
-        messages = [
-            AIMessage(role="system", content=system_prompt),
-            AIMessage(role="user", content=user_prompt)
-        ]
-        
-        return await self.complete(
-            messages=messages,
-            temperature=0.7,
-            max_tokens=200
-        )
-    
-    async def generate_mood_insights(
-        self,
-        mood_data: Dict[str, Any],
-        historical_data: Optional[List[Dict[str, Any]]] = None
-    ) -> AIResponse:
-        """
-        Generate insights about mood patterns and trends.
-        
-        Args:
-            mood_data: Current mood information
-            historical_data: Optional historical mood data for pattern analysis
-        """
-        
-        system_prompt = """You are an AI mood analyst that helps users understand their emotional patterns. 
-        
-        Your responses should:
-        1. Identify patterns in mood data
-        2. Provide gentle insights about emotional trends
-        3. Suggest healthy coping strategies when appropriate
-        4. Be supportive and avoid clinical language
-        5. Keep insights actionable and hopeful"""
-        
-        user_prompt = f"Analyze this mood entry:\n"
-        user_prompt += f"Primary mood: {mood_data.get('primary_mood', 'Unknown')}\n"
-        user_prompt += f"Energy level: {mood_data.get('energy_level', 'N/A')}/10\n"
-        user_prompt += f"Stress level: {mood_data.get('stress_level', 'N/A')}/10\n"
-        
-        if mood_data.get('notes'):
-            user_prompt += f"Notes: {mood_data['notes']}\n"
-        
-        if historical_data:
-            user_prompt += f"\nRecent mood history: {len(historical_data)} entries available for pattern analysis."
-        
-        messages = [
-            AIMessage(role="system", content=system_prompt),
-            AIMessage(role="user", content=user_prompt)
-        ]
-        
-        return await self.complete(
-            messages=messages,
-            temperature=0.6,
-            max_tokens=250
-        )
     
     async def get_available_models(self) -> List[str]:
         """
