@@ -131,7 +131,16 @@ async def get_available_models(ai_service: OpenRouterService = Depends(get_openr
 @app.post("/api/ai/complete", response_model=APIResponse)
 async def ai_complete(
     request: Dict[str, Any] = Body(
-        examples={
+        openapi_examples={
+            "test_request": {
+                "summary": "Quick test request",
+                "description": "Simple test message to verify API functionality",
+                "value": {
+                    "messages": "Hello! Can you tell me a fun fact?",
+                    "temperature": 0.7,
+                    "max_tokens": 100
+                }
+            },
             "simple_message": {
                 "summary": "Simple text message",
                 "description": "Basic AI completion with a simple text prompt",
