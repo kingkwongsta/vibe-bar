@@ -69,6 +69,9 @@ Create a creative, delicious cocktail recipe."""
                 
             user_prompt += "\nRespond with ONLY the JSON object, no markdown or extra text."
             
+            # Log the prompt being sent to LLM for debugging
+            logger.info(f"Sending prompt to LLM: {user_prompt}")
+            
             messages = [
                 AIMessage(role="system", content=system_prompt),
                 AIMessage(role="user", content=user_prompt)
