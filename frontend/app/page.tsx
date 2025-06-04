@@ -30,6 +30,7 @@ export default function VibeBarApp() {
     updateSpecialRequests,
     getFormData,
     resetForm,
+    isFormRestored,
   } = useVibeBar()
 
   const { preferences } = useUserPreferences()
@@ -81,6 +82,7 @@ export default function VibeBarApp() {
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
             prepareLLMPromptCallback={prepareLLMPrompt}
+            isFormRestored={isFormRestored}
           />
         )
       
@@ -118,6 +120,7 @@ export default function VibeBarApp() {
             updateSpecialRequests={updateSpecialRequests}
             userPreferences={preferences}
             prepareLLMPromptCallback={prepareLLMPrompt}
+            isFormRestored={isFormRestored}
           />
         )
     }

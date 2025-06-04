@@ -1,8 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import type { ViewType, CocktailFormData } from "@/lib/types"
 import { logger } from "@/lib/logger"
+import { useFormPersistence } from "./use-form-persistence"
+
+// Debounce utility
+function useDebounce<T extends (...args: any[]) => void>(
+  callback: T,
+  delay: number
+): T {
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout>()
+
+  return useCallback(
+    ((...args) => {
+      if (debounceTimer) clearTimeout(debounceTimer)
+      setDebounceTimer(setTimeout(() => callback(...args), delay))
+    }) as T,
+    [callback, delay, debounceTimer]
+  )
+}
 
 export function useVibeBar() {
   const [currentView, setCurrentView] = useState<ViewType>("landing")
@@ -14,6 +31,57 @@ export function useVibeBar() {
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null)
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([])
   const [specialRequests, setSpecialRequests] = useState("")
+
+  const { saveFormState, loadFormState, clearFormState, isRestored } = useFormPersistence()
+
+  // Debounced save function
+  const debouncedSave = useDebounce(() => {
+    saveFormState({
+      selectedIngredients,
+      selectedFlavors,
+      customIngredients,
+      selectedAlcoholStrength,
+      selectedVibe,
+      dietaryRestrictions,
+      specialRequests,
+    })
+  }, 1000) // Save after 1 second of inactivity
+
+  // Auto-save effect
+  useEffect(() => {
+    if (isRestored) {
+      debouncedSave()
+    }
+  }, [
+    selectedIngredients,
+    selectedFlavors,
+    customIngredients,
+    selectedAlcoholStrength,
+    selectedVibe,
+    dietaryRestrictions,
+    specialRequests,
+    debouncedSave,
+    isRestored,
+  ])
+
+  // Restore state on mount
+  useEffect(() => {
+    const savedState = loadFormState()
+    if (savedState) {
+      if (savedState.selectedIngredients) setSelectedIngredients(savedState.selectedIngredients)
+      if (savedState.selectedFlavors) setSelectedFlavors(savedState.selectedFlavors)
+      if (savedState.customIngredients) setCustomIngredients(savedState.customIngredients)
+      if (savedState.selectedAlcoholStrength) setSelectedAlcoholStrength(savedState.selectedAlcoholStrength)
+      if (savedState.selectedVibe) setSelectedVibe(savedState.selectedVibe)
+      if (savedState.dietaryRestrictions) setDietaryRestrictions(savedState.dietaryRestrictions)
+      if (savedState.specialRequests) setSpecialRequests(savedState.specialRequests)
+      
+      logger.logUserAction('form-state-restored', {
+        restoredFields: Object.keys(savedState).filter(key => key !== 'timestamp'),
+        timestamp: savedState.timestamp
+      })
+    }
+  }, [loadFormState])
 
   // Enhanced view setter with logging
   const setCurrentViewWithLogging = (view: ViewType) => {
@@ -178,6 +246,9 @@ export function useVibeBar() {
     setSelectedVibe(null)
     setSpecialRequests("")
     setDietaryRestrictions([])
+    
+    // Clear persisted state
+    clearFormState()
   }
 
   return {
@@ -202,5 +273,7 @@ export function useVibeBar() {
     updateSpecialRequests,
     getFormData,
     resetForm,
+    // Expose restoration state for UI feedback
+    isFormRestored: isRestored,
   }
 } 
