@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
+import { generateCocktailRecipe, testBackendConnectivity } from "@/lib/api"
+import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
+import { useState } from "react"
 import {
   Sparkles,
   ChefHat,
@@ -20,6 +23,7 @@ import {
   X,
   AlertCircle,
   CheckCircle,
+  Loader2,
 } from "lucide-react"
 import { INGREDIENTS, FLAVOR_PROFILES, VIBES, ALCOHOL_STRENGTHS } from "@/lib/constants"
 import type { ViewType, UserPreferences } from "@/lib/types"
@@ -69,6 +73,10 @@ export function LandingView({
   prepareLLMPromptCallback,
   isFormRestored = false,
 }: LandingViewProps) {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [generatedRecipe, setGeneratedRecipe] = useState<CocktailRecipe | null>(null)
+
   const {
     validateSpecialRequestsInput,
     validateSelectionLimitsInput,
@@ -157,6 +165,54 @@ export function LandingView({
     
     console.log("LLM Prompt Data:", prompt)
     return prompt
+  }
+
+  // Function to handle recipe generation via API
+  const handleGenerateRecipe = async () => {
+    // Clear any previous errors
+    setApiError(null)
+    
+    // Validate form inputs
+    const validation = validateRecipeGenerationInput({
+      selectedIngredients,
+      selectedFlavors,
+      customIngredients: customIngredientInput.trim() || undefined,
+    })
+    
+    if (!validation.isValid) {
+      return // Validation errors will be displayed by the form validation hook
+    }
+
+    setIsGenerating(true)
+
+    try {
+      // Prepare the preferences object for the API
+      const preferences: ApiUserPreferences = {
+        ingredients: selectedIngredients.length > 0 ? selectedIngredients : userPreferences.baseSpirits,
+        customIngredients: customIngredientInput.trim() || undefined,
+        flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
+        strength: selectedAlcoholStrength || userPreferences.defaultStrength,
+        vibe: selectedVibe || userPreferences.defaultVibe,
+        specialRequests: specialRequests.trim() || undefined,
+      }
+
+      console.log('Generating recipe with preferences:', preferences)
+
+      // Call the API
+      const response = await generateCocktailRecipe(preferences)
+
+      if (response.success && response.data) {
+        setGeneratedRecipe(response.data)
+        setCurrentView("recipe")
+      } else {
+        throw new Error(response.message || 'Failed to generate recipe')
+      }
+    } catch (error) {
+      console.error('Recipe generation error:', error)
+      setApiError(error instanceof Error ? error.message : 'An unexpected error occurred')
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -371,20 +427,33 @@ export function LandingView({
               </Alert>
             )}
 
+            {/* API Error */}
+            {apiError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{apiError}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Generate Button */}
             <div className="text-center pt-4">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white px-8 py-3 text-lg font-semibold"
-                onClick={() => {
-                  const prompt = prepareLLMPrompt()
-                  if (prompt) {
-                    setCurrentView("recipe")
-                  }
-                }}
+                className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleGenerateRecipe}
+                disabled={isGenerating}
               >
-                <Sparkles className="mr-2 h-5 w-5" />
-                Create Recipe
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Generating Recipe...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Create Recipe
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
