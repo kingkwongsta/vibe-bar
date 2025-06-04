@@ -67,12 +67,11 @@ export function LandingView({
   } = useFormValidation()
 
   const handleSpecialRequestsChange = (requests: string) => {
-    const validation = validateSpecialRequestsInput(requests)
-    if (validation.isValid && validation.sanitized !== undefined) {
-      updateSpecialRequests(validation.sanitized)
-    } else {
-      updateSpecialRequests(requests) // Allow typing but show error
-    }
+    // Always update the special requests to allow spaces
+    updateSpecialRequests(requests)
+    
+    // Run validation for error display but don't use sanitized version
+    validateSpecialRequestsInput(requests)
   }
 
   const handleCustomIngredientsChange = (ingredients: string) => {
@@ -212,9 +211,9 @@ export function LandingView({
             {/* Available Ingredients */}
             <div>
               <Label className="text-lg font-semibold mb-4 block">
-                Choose ingredients for your recipe?
+                Choose a spirit or non-alcoholic option
               </Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              <div className="flex flex-wrap gap-4">
                 {INGREDIENTS.map((ingredient) => (
                   <Badge
                     key={ingredient}
@@ -264,7 +263,7 @@ export function LandingView({
               <Label className="text-lg font-semibold mb-4 block">
                 Choose a flavor profile?
               </Label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-4">
                 {FLAVOR_PROFILES.map((flavor) => (
                   <Badge
                     key={flavor}
@@ -286,7 +285,7 @@ export function LandingView({
             <div>
               <div>
                 <Label className="text-lg font-semibold mb-4 block">Vibe</Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-4">
                   {VIBES.map((vibe) => (
                     <Badge
                       key={vibe}

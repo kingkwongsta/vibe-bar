@@ -5,6 +5,7 @@ export const INGREDIENTS = [
   "Tequila",
   "Whiskey",
   "Bourbon",
+  "Non-Alcoholic",
 ] as const
 
 export const FLAVOR_PROFILES = [
