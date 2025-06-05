@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { generateCocktailRecipe } from "@/lib/api"
-import type { UserPreferences as ApiUserPreferences, CocktailRecipe } from "@/lib/api"
+import type { UserPreferences as ApiUserPreferences } from "@/lib/api"
 import { useState } from "react"
 import {
   Sparkles,
@@ -18,43 +18,25 @@ import {
   Loader2,
 } from "lucide-react"
 import { INGREDIENTS, FLAVOR_PROFILES, VIBES } from "@/lib/constants"
-import type { ViewType, UserPreferences } from "@/lib/types"
+import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
-interface LandingViewProps {
-  currentView: ViewType
-  setCurrentView: (view: ViewType) => void
-  selectedIngredients: string[]
-  selectedFlavors: string[]
-  customIngredientInput: string
-  selectedVibe: string | null
-  specialRequests: string
-  toggleIngredient: (ingredient: string) => void
-  toggleFlavor: (flavor: string) => void
-  setCustomIngredientInput: (input: string) => void
-  setVibe: (vibe: string) => void
-  updateSpecialRequests: (requests: string) => void
-  userPreferences: UserPreferences
-  setGeneratedRecipe: (recipe: CocktailRecipe) => void
-  isFormRestored?: boolean
-}
-
-export function LandingView({
-  currentView,
-  setCurrentView,
-  selectedIngredients,
-  selectedFlavors,
-  customIngredientInput,
-  selectedVibe,
-  specialRequests,
-  toggleIngredient,
-  toggleFlavor,
-  setCustomIngredientInput,
-  setVibe,
-  updateSpecialRequests,
-  userPreferences,
-  setGeneratedRecipe,
-  isFormRestored = false,
-}: LandingViewProps) {
+export function LandingView() {
+  const {
+    setCurrentView,
+    selectedIngredients,
+    selectedFlavors,
+    customIngredientInput,
+    selectedVibe,
+    specialRequests,
+    toggleIngredient,
+    toggleFlavor,
+    setCustomIngredientInput,
+    setVibe,
+    updateSpecialRequests,
+    userPreferences,
+    setGeneratedRecipe,
+    isFormRestored,
+  } = useVibeBarContext()
   const [isGenerating, setIsGenerating] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
 
@@ -159,7 +141,7 @@ export function LandingView({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-      <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+      <NavigationBar />
 
       {/* Form Restoration Notification */}
       {isFormRestored && (

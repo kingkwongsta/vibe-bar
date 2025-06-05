@@ -14,15 +14,9 @@ import { SPIRITS, FLAVOR_PROFILES, VIBES } from "@/lib/constants"
 import {
   Settings,
 } from "lucide-react"
-import type { ViewType } from "@/lib/types"
 import { useState } from "react"
 
-interface ProfileViewProps {
-  currentView: ViewType
-  setCurrentView: (view: ViewType) => void
-}
-
-export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
+export function ProfileView() {
   const {
     preferences,
     isLoading,
@@ -66,7 +60,7 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-      <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+      <NavigationBar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
