@@ -10,14 +10,16 @@
 ## 🏗️ Technical Architecture
 
 ### Tech Stack
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript 5+
+- **Frontend**: Next.js 15 with App Router, React 19, TypeScript 5+
 - **State Management**: Zustand
-- **Styling**: Tailwind CSS 
-- **Backend**: Supabase (Auth, Database, Edge Functions)
-- **AI Integration**: OpenRouter.ai API via Server Actions
-- **Deployment**: Vercel (with Edge Runtime support)
-- **Performance**: Turbopack (dev) + Next.js compiler (prod)
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI primitives
+- **Backend API**: FastAPI (Python) with Pydantic models
+- **AI Integration**: OpenRouter.ai API via FastAPI service layer
+- **Database**: TBD (Supabase recommended for Phase 2)
+- **Authentication**: TBD (to be implemented in Phase 2)
+- **Deployment**: Vercel (frontend) + Backend hosting TBD
+- **Development**: Turbopack (dev) + Next.js compiler (prod)
 
 ---
 
@@ -159,35 +161,39 @@ interface RecipeResponse {
 
 ## 🚀 Development Phases
 
-### Phase 1: Core MVP (Week 1-2)
+### Phase 1: Core MVP ✅ (COMPLETED)
 **Goal**: Basic recipe generation functionality
 
 **Features:**
-- User preference input form
-- AI recipe generation via OpenRouter
-- Basic recipe display
-- User authentication
-- Simple recipe saving
+- ✅ User preference input form
+- ✅ AI recipe generation via OpenRouter
+- ✅ Basic recipe display
+- ✅ Frontend-backend API communication
+- ❌ User authentication (moved to Phase 2)
+- ❌ Recipe saving (moved to Phase 2)
 
 **Success Criteria:**
-- User can generate and view cocktail recipes
-- Basic error handling and loading states
-- Authentication flow working
+- ✅ User can generate and view cocktail recipes
+- ✅ Basic error handling and loading states
+- ✅ FastAPI backend serving recipe generation
+- ❌ Authentication flow (deferred to Phase 2)
 
-### Phase 2: Enhanced UX (Week 3)
-**Goal**: Improved user experience and personalization
+### Phase 2: Database & Authentication (Current)
+**Goal**: Add persistence and user management
 
 **Features:**
-- Enhanced ingredient selector with search
-- Visual flavor profile selection
-- Recipe rating and feedback
+- Database integration (Supabase recommended)
+- User authentication system
+- Recipe saving and management
 - User profile management
 - My Bar inventory system
+- Enhanced ingredient selector with search
 
 **Success Criteria:**
-- Improved form interactions
+- User registration and login
 - Persistent user preferences
 - Recipe management features
+- Database schema implementation
 
 ### Phase 3: Advanced Features (Week 4+)
 **Goal**: Production-ready application

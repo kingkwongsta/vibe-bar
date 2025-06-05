@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # Vibe Bar - Next.js 15 Frontend Implementation Guide
 
 ## 🏗️ Project Structure
@@ -146,43 +151,61 @@ vibe-bar/
 
 ---
 
-## 🎨 Component Architecture
+## 🎯 Current Frontend Implementation
 
-### 1. Root Layout (`app/layout.tsx`)
+### Tech Stack ✅ (IMPLEMENTED)
+- **Next.js 15**: App Router with React 19
+- **TypeScript 5+**: Full type safety
+- **Tailwind CSS v4**: Modern utility-first styling
+- **Zustand**: Lightweight state management
+- **Radix UI**: Accessible UI primitives
+- **FastAPI Integration**: Direct API calls to Python backend
+
+### Project Structure
+```
+frontend/
+├── app/                          # Next.js 15 App Router
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Home page
+│   ├── globals.css              # Global styles
+│   └── context/                 # React contexts
+├── components/                   # Reusable components
+│   └── ui/                      # Base UI components
+├── hooks/                       # Custom React hooks
+├── lib/                         # Utilities and API
+│   ├── api.ts                   # FastAPI integration
+│   ├── validation.ts            # Form validation
+│   ├── types.ts                 # TypeScript types
+│   └── utils.ts                 # Helper functions
+├── store/                       # Zustand state stores
+└── public/                      # Static assets
+```
+
+### 1. Current Root Layout (`app/layout.tsx`)
 ```typescript
-import { Inter } from 'next/font/google'
-import { Providers } from '@/components/providers'
-import { Header } from '@/components/layout/header'
-import { Footer } from '@/components/layout/footer'
-import { Toaster } from '@/components/ui/toaster'
-import './globals.css'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: 'Vibe Bar - AI Cocktail Generator',
-  description: 'Generate personalized cocktail recipes with AI',
-}
+export const metadata: Metadata = {
+  title: "Vibe Bar - AI Cocktail Generator", 
+  description: "Generate personalized cocktail recipes with AI",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster />
-        </Providers>
+        {children}
       </body>
     </html>
-  )
+  );
 }
 ```
 
@@ -423,9 +446,60 @@ export function RecipeActions({ recipe }: RecipeActionsProps) {
 
 ---
 
-## 🔌 Server Actions Implementation
+## 🔌 Current API Integration
 
-### Recipe Actions (`lib/actions/recipe-actions.ts`)
+### FastAPI Communication (`lib/api.ts`)
+```typescript
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+export interface UserPreferences {
+  ingredients: string[]
+  customIngredients?: string
+  flavors: string[]
+  vibe?: string
+  specialRequests?: string
+}
+
+export interface CocktailRecipe {
+  recipeTitle: string
+  recipeDescription: string
+  recipeMeta: Array<{ text: string }>
+  recipeIngredients: Array<{ name: string; amount: string }>
+  recipeInstructions: string[]
+  recipeDetails: Array<{ title: string; content: string }>
+}
+
+/**
+ * Generate cocktail recipe from user preferences
+ */
+export async function generateCocktailRecipe(preferences: UserPreferences) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/cocktails/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(preferences),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Recipe generation failed:', error)
+    throw error
+  }
+}
+```
+
+---
+
+## 🗂️ Phase 2: Server Actions Implementation (To Be Added)
+
+### Future Recipe Actions with Supabase (`lib/actions/recipe-actions.ts`)
 ```typescript
 'use server'
 
