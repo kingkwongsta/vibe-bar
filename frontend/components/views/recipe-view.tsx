@@ -158,9 +158,9 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe, reset
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" onClick={handleBackToRecipeCreator}>
+              <Button variant="outline" onClick={handleBackToRecipeCreator} className="ml-auto">
                 <Zap className="h-4 w-4 mr-2" />
-                Generate Another
+                Create Another
               </Button>
             </div>
           </CardContent>
