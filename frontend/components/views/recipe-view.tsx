@@ -158,10 +158,6 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe, reset
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline">
-                <Star className="h-4 w-4 mr-2" />
-                Rate Recipe
-              </Button>
               <Button variant="outline" onClick={handleBackToRecipeCreator}>
                 <Zap className="h-4 w-4 mr-2" />
                 Generate Another
