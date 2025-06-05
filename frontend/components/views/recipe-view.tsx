@@ -11,7 +11,6 @@ import {
   Wine,
   Heart,
   Share2,
-  Star,
   Zap,
   Sparkles,
 } from "lucide-react"

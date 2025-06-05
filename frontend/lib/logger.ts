@@ -5,7 +5,7 @@ interface LogEntry {
   level: LogLevel
   category: string
   action: string
-  data?: any
+  data?: Record<string, unknown>
   userId?: string
   sessionId: string
 }
@@ -29,7 +29,7 @@ class Logger {
     level: LogLevel,
     category: string,
     action: string,
-    data?: any,
+    data?: Record<string, unknown>,
     userId?: string
   ): LogEntry {
     return {
@@ -55,12 +55,12 @@ class Logger {
   }
 
   // User action logging specifically for preferences
-  logUserAction(action: string, data?: any, userId?: string) {
+  logUserAction(action: string, data?: Record<string, unknown>, userId?: string) {
     this.log('info', 'user-action', action, data, userId)
   }
 
   // Preference selection logging
-  logPreferenceSelection(preferenceType: string, value: any, operation: 'select' | 'deselect' | 'change') {
+  logPreferenceSelection(preferenceType: string, value: unknown, operation: 'select' | 'deselect' | 'change') {
     const data = {
       preferenceType,
       value,
@@ -71,7 +71,7 @@ class Logger {
     this.logUserAction(`preference-${operation}`, data)
   }
 
-  private log(level: LogLevel, category: string, action: string, data?: any, userId?: string) {
+  private log(level: LogLevel, category: string, action: string, data?: Record<string, unknown>, userId?: string) {
     const entry = this.createLogEntry(level, category, action, data, userId)
     
     // Add to history (keep only last N entries)
@@ -107,7 +107,7 @@ class Logger {
   }
 
   // Method to manually trigger a log from dev tools
-  debug(message: string, data?: any) {
+  debug(message: string, data?: Record<string, unknown>) {
     this.log('debug', 'manual', message, data)
   }
 

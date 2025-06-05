@@ -154,7 +154,7 @@ export function ProfileView({ currentView, setCurrentView }: ProfileViewProps) {
             <Card className="bg-white/90 backdrop-blur-sm border-0">
               <CardHeader>
                 <CardTitle>Dietary Restrictions</CardTitle>
-                <CardDescription>Help us avoid ingredients you can't or don't want to consume</CardDescription>
+                <CardDescription>Help us avoid ingredients you can&apos;t or don&apos;t want to consume</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
