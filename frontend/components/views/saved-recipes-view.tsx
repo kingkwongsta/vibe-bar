@@ -14,12 +14,7 @@ import {
   Heart,
   Zap,
 } from "lucide-react"
-import type { ViewType } from "@/lib/types"
-
-interface SavedRecipesViewProps {
-  currentView: ViewType
-  setCurrentView: (view: ViewType) => void
-}
+import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
 // Sample data for saved recipes
 const savedRecipes = [
@@ -67,10 +62,12 @@ const savedRecipes = [
   }
 ]
 
-export function SavedRecipesView({ currentView, setCurrentView }: SavedRecipesViewProps) {
+export function SavedRecipesView() {
+  const { setCurrentView } = useVibeBarContext()
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-      <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+      <NavigationBar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

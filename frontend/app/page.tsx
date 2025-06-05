@@ -1,113 +1,32 @@
 "use client"
 
-import { useVibeBar } from "@/hooks/use-vibe-bar"
-import { useUserPreferences } from "@/hooks/use-user-preferences"
 import { LandingView } from "@/components/views/landing-view"
 import { RecipeView } from "@/components/views/recipe-view"
 import { SavedRecipesView } from "@/components/views/saved-recipes-view"
 import { ProfileView } from "@/components/views/profile-view"
 import { DevLogger } from "@/components/debug/dev-logger"
+import { useVibeBarContext } from "./context/vibe-bar-context"
 
 export default function VibeBarApp() {
-  const {
-    currentView,
-    setCurrentView,
-    selectedIngredients,
-    selectedFlavors,
-    customIngredients,
-    customIngredientInput,
-    selectedVibe,
-    specialRequests,
-    toggleIngredient,
-    toggleFlavor,
-    addCustomIngredient,
-    removeCustomIngredient,
-    setCustomIngredientInput,
-    setVibe,
-    updateSpecialRequests,
-    generatedRecipe,
-    setGeneratedRecipe,
-    getFormData,
-    resetForm,
-    isFormRestored,
-  } = useVibeBar()
-
-  const { preferences } = useUserPreferences()
-
-  // Function to prepare LLM prompt data - mirrors the logic from LandingView
-  const prepareLLMPrompt = () => {
-    const prompt = {
-      ingredients: selectedIngredients.length > 0 ? selectedIngredients : preferences.baseSpirits,
-      flavors: selectedFlavors.length > 0 ? selectedFlavors : preferences.flavorProfiles,
-      vibe: selectedVibe || preferences.defaultVibe,
-      dietaryRestrictions: preferences.dietaryRestrictions,
-      customIngredients: customIngredientInput.trim() || undefined,
-      specialRequests: specialRequests.trim() || undefined,
-      userContext: {
-        preferredSpirits: preferences.baseSpirits,
-        preferredFlavors: preferences.flavorProfiles,
-        preferredVibes: preferences.preferredVibes,
-        restrictions: preferences.dietaryRestrictions
-      }
-    }
-    
-    console.log("LLM Prompt Data:", prompt)
-    return prompt
-  }
+  const { currentView, prepareLLMPrompt } = useVibeBarContext()
 
   // Function to render the appropriate view based on currentView
   const renderCurrentView = () => {
     switch (currentView) {
       case "landing":
-        return (
-          <LandingView
-            currentView={currentView}
-            setCurrentView={setCurrentView}
-            selectedIngredients={selectedIngredients}
-            selectedFlavors={selectedFlavors}
-            customIngredientInput={customIngredientInput}
-            selectedVibe={selectedVibe}
-            specialRequests={specialRequests}
-            toggleIngredient={toggleIngredient}
-            toggleFlavor={toggleFlavor}
-            setCustomIngredientInput={setCustomIngredientInput}
-            setVibe={setVibe}
-            updateSpecialRequests={updateSpecialRequests}
-            userPreferences={preferences}
-            setGeneratedRecipe={setGeneratedRecipe}
-            isFormRestored={isFormRestored}
-          />
-        )
+        return <LandingView />
       
       case "recipe":
-        return <RecipeView currentView={currentView} setCurrentView={setCurrentView} generatedRecipe={generatedRecipe} resetForm={resetForm} />
+        return <RecipeView />
       
       case "saved":
-        return <SavedRecipesView currentView={currentView} setCurrentView={setCurrentView} />
+        return <SavedRecipesView />
       
       case "profile":
-        return <ProfileView currentView={currentView} setCurrentView={setCurrentView} />
+        return <ProfileView />
       
       default:
-        return (
-          <LandingView
-            currentView={currentView}
-            setCurrentView={setCurrentView}
-            selectedIngredients={selectedIngredients}
-            selectedFlavors={selectedFlavors}
-            customIngredientInput={customIngredientInput}
-            selectedVibe={selectedVibe}
-            specialRequests={specialRequests}
-            toggleIngredient={toggleIngredient}
-            toggleFlavor={toggleFlavor}
-            setCustomIngredientInput={setCustomIngredientInput}
-            setVibe={setVibe}
-            updateSpecialRequests={updateSpecialRequests}
-            userPreferences={preferences}
-            setGeneratedRecipe={setGeneratedRecipe}
-            isFormRestored={isFormRestored}
-          />
-        )
+        return <LandingView />
     }
   }
 

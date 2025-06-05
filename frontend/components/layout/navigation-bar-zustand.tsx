@@ -1,10 +1,25 @@
 import React from "react"
-import { Wine, Home, Heart, User } from "lucide-react"
+import { Wine, Home, Heart, User, Share2, Link } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useVibeBarContext } from "@/app/context/vibe-bar-context"
+import { Button } from "@/components/ui/button"
+import { useCurrentView, useVibeBarStore } from "@/store/vibe-bar-store"
+import { useShareableUrl } from "@/hooks/use-url-sync"
 
-export const NavigationBar = React.memo(function NavigationBar() {
-  const { currentView, setCurrentView } = useVibeBarContext()
+export const NavigationBarZustand = React.memo(function NavigationBarZustand() {
+  const currentView = useCurrentView()
+  const setCurrentView = useVibeBarStore((state) => state.setCurrentView)
+  const { copyToClipboard } = useShareableUrl()
+
+  const handleShare = async () => {
+    const result = await copyToClipboard()
+    if (result.success) {
+      // Could show a toast notification here
+      console.log('URL copied to clipboard:', result.url)
+    } else {
+      console.error('Failed to copy URL:', result.error)
+    }
+  }
+
   return (
     <nav className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,12 +65,42 @@ export const NavigationBar = React.memo(function NavigationBar() {
               <User className="h-4 w-4 inline mr-1" />
               Profile
             </button>
+            
+            {/* Share button */}
+            <Button
+              onClick={handleShare}
+              variant="outline"
+              size="sm"
+              className="text-gray-600 hover:text-amber-600"
+            >
+              <Link className="h-4 w-4 mr-1" />
+              Share
+            </Button>
           </div>
 
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder.svg?height=32&width=32" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
+          {/* Mobile navigation */}
+          <div className="md:hidden flex items-center space-x-4">
+            <Button
+              onClick={handleShare}
+              variant="outline"
+              size="sm"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/placeholder.svg?height=32&width=32" />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+          </div>
+
+          {/* Desktop avatar */}
+          <div className="hidden md:block">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/placeholder.svg?height=32&width=32" />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </div>
     </nav>

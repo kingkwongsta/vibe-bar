@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { NavigationBar } from "@/components/layout/navigation-bar"
-import type { CocktailRecipe } from "@/lib/api"
 import {
   Clock,
   ChefHat,
@@ -11,21 +10,14 @@ import {
   Wine,
   Heart,
   Share2,
-  Star,
   Zap,
   Sparkles,
 } from "lucide-react"
-import type { ViewType } from "@/lib/types"
 import React from "react"
+import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
-interface RecipeViewProps {
-  currentView: ViewType
-  setCurrentView: (view: ViewType) => void
-  generatedRecipe: CocktailRecipe | null
-  resetForm: () => void
-}
-
-export function RecipeView({ currentView, setCurrentView, generatedRecipe, resetForm }: RecipeViewProps) {
+export function RecipeView() {
+  const { setCurrentView, generatedRecipe, resetForm } = useVibeBarContext()
   // Handler for back to recipe creator that resets form
   const handleBackToRecipeCreator = () => {
     resetForm()
@@ -36,7 +28,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe, reset
   if (!generatedRecipe) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-        <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+        <NavigationBar />
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
@@ -74,7 +66,7 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe, reset
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-      <NavigationBar currentView={currentView} setCurrentView={setCurrentView} />
+      <NavigationBar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -158,13 +150,9 @@ export function RecipeView({ currentView, setCurrentView, generatedRecipe, reset
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline">
-                <Star className="h-4 w-4 mr-2" />
-                Rate Recipe
-              </Button>
-              <Button variant="outline" onClick={handleBackToRecipeCreator}>
+              <Button variant="outline" onClick={handleBackToRecipeCreator} className="ml-auto">
                 <Zap className="h-4 w-4 mr-2" />
-                Generate Another
+                Create Another
               </Button>
             </div>
           </CardContent>

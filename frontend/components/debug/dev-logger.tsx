@@ -5,32 +5,31 @@ import { logger } from "@/lib/logger"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { X, Bug, ChevronDown, ChevronUp, Zap } from "lucide-react"
+import { X, Bug, Zap } from "lucide-react"
 
 interface LogEntry {
   timestamp: string
   level: string
   category: string
   action: string
-  data?: any
+  data?: Record<string, unknown>
   sessionId: string
 }
 
 interface DevLoggerProps {
-  onGeneratePrompt?: () => any
+  onGeneratePrompt?: () => Record<string, unknown>
 }
 
 export function DevLogger({ onGeneratePrompt }: DevLoggerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [logs, setLogs] = useState<LogEntry[]>([])
   
-  // Only show in development
-  if (process.env.NODE_ENV !== 'development') {
-    return null
-  }
-
   // Load initial logs and subscribe to new ones
   useEffect(() => {
+    // Only run in development
+    if (process.env.NODE_ENV !== 'development') {
+      return
+    }
     // Load existing logs
     setLogs(logger.getLogHistory())
     
@@ -50,6 +49,11 @@ export function DevLogger({ onGeneratePrompt }: DevLoggerProps) {
       logger.onNewLog = undefined
     }
   }, [])
+
+  // Only show in development
+  if (process.env.NODE_ENV !== 'development') {
+    return null
+  }
 
   const clearLogs = () => {
     setLogs([])
