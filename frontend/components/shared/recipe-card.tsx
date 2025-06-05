@@ -1,3 +1,4 @@
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +11,7 @@ interface RecipeCardProps {
   onShare?: () => void
 }
 
-export function RecipeCard({ recipe, onViewRecipe, onShare }: RecipeCardProps) {
+export const RecipeCard = React.memo<RecipeCardProps>(function RecipeCard({ recipe, onViewRecipe, onShare }) {
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-white/90 backdrop-blur-sm border-0">
       <CardHeader>
@@ -56,4 +57,4 @@ export function RecipeCard({ recipe, onViewRecipe, onShare }: RecipeCardProps) {
       </CardContent>
     </Card>
   )
-} 
+}) 

@@ -1,8 +1,9 @@
+import React from "react"
 import { Wine, Home, Heart, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
-export function NavigationBar() {
+export const NavigationBar = React.memo(function NavigationBar() {
   const { currentView, setCurrentView } = useVibeBarContext()
   return (
     <nav className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50">
@@ -59,4 +60,4 @@ export function NavigationBar() {
       </div>
     </nav>
   )
-} 
+}) 
