@@ -4,6 +4,7 @@
 
 #dev scripts
 dev-vscode.sh
+dev-vscode.ps1
 
 # OS generated files
 .DS_Store
