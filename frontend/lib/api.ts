@@ -18,6 +18,7 @@ export interface UserPreferences {
   flavors: string[]
   vibe?: string
   specialRequests?: string
+  model?: string
 }
 
 export interface CocktailRecipe {

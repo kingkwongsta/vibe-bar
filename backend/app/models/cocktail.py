@@ -13,6 +13,7 @@ class UserPreferences(BaseModel):
     flavors: List[str] = []
     vibe: Optional[str] = None
     specialRequests: Optional[str] = None
+    model: Optional[str] = None  # LLM model to use for generation
 
 
 class RecipeMeta(BaseModel):

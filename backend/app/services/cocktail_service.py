@@ -71,6 +71,7 @@ Create a creative, delicious cocktail recipe."""
             
             # Log the prompt being sent to LLM for debugging
             logger.info(f"Sending prompt to LLM: {user_prompt}")
+            logger.info(f"Using LLM model: {preferences.model or 'default'}")
             
             messages = [
                 AIMessage(role="system", content=system_prompt),
@@ -80,6 +81,7 @@ Create a creative, delicious cocktail recipe."""
             # Call AI service
             ai_response = await self.ai_service.complete(
                 messages=messages,
+                model=preferences.model,  # Use specified model if provided
                 temperature=0.8,
                 max_tokens=1000,
             )

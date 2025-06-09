@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { X, Bug, Zap } from "lucide-react"
+import { LLMSwitcher } from "./llm-switcher"
 
 interface LogEntry {
   timestamp: string
@@ -99,7 +100,7 @@ export function DevLogger({ onGeneratePrompt }: DevLoggerProps) {
 
       {/* Logger panel */}
       {isOpen && (
-        <Card className="fixed bottom-20 right-4 w-96 max-h-96 z-40 shadow-xl">
+        <Card className="fixed bottom-20 right-4 w-96 max-h-[500px] z-40 shadow-xl">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -145,7 +146,13 @@ export function DevLogger({ onGeneratePrompt }: DevLoggerProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-64 px-4 pb-4 overflow-y-auto">
+            {/* LLM Switcher */}
+            <div className="px-4 py-2 border-b bg-gray-50">
+              <LLMSwitcher onModelChange={(model) => {
+                logger.debug("LLM Model Changed", { selectedModel: model })
+              }} />
+            </div>
+            <div className="h-56 px-4 pb-4 overflow-y-auto">
               <div className="space-y-2">
                 {logs.length === 0 ? (
                   <p className="text-xs text-gray-500 text-center py-4">
