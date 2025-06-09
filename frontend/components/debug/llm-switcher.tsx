@@ -15,28 +15,34 @@ const AVAILABLE_MODELS = [
     description: "Fast and efficient, good for most tasks"
   },
   {
-    id: "openai/gpt-3.5-turbo", 
-    name: "GPT-3.5 Turbo",
-    provider: "OpenAI",
-    description: "Classic and reliable"
-  },
-  {
     id: "anthropic/claude-3-haiku",
     name: "Claude 3 Haiku",
     provider: "Anthropic", 
     description: "Fast and creative"
   },
   {
-    id: "meta-llama/llama-3.2-3b-instruct",
-    name: "Llama 3.2 3B",
-    provider: "Meta",
-    description: "Open source option"
+    id: "google/gemma-3-27b-it:free",
+    name: "Gemma 3 27B (Free)",
+    provider: "Google",
+    description: "Free Google model, good performance"
   },
   {
-    id: "google/gemini-flash-1.5",
-    name: "Gemini Flash 1.5",
+    id: "google/gemini-2.5-flash-preview-05-20",
+    name: "Gemini 2.5 Flash Preview",
     provider: "Google",
-    description: "Google's efficient model"
+    description: "Latest Gemini preview model"
+  },
+  {
+    id: "google/gemini-2.5-flash-preview-05-20:thinking",
+    name: "Gemini 2.5 Flash (Thinking)",
+    provider: "Google",
+    description: "Gemini with enhanced reasoning"
+  },
+  {
+    id: "meta-llama/llama-4-scout:free",
+    name: "Llama 4 Scout (Free)",
+    provider: "Meta",
+    description: "Latest Llama model, free tier"
   }
 ]
 

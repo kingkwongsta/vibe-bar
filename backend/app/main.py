@@ -105,7 +105,7 @@ async def generate_cocktail_recipe(
             "flavors": ["sweet"],
             "vibe": "date night",
             "specialRequests": "no eggs",
-            "model": "openai/gpt-4o-mini"
+            "model": "anthropic/claude-3-haiku"
         }
     ),
     cocktail_service = Depends(get_cocktail_service)

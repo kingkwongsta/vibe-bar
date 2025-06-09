@@ -181,10 +181,11 @@ class OpenRouterService:
         """
         return [
             "openai/gpt-4o-mini",
-            "openai/gpt-3.5-turbo",
             "anthropic/claude-3-haiku",
-            "meta-llama/llama-3.2-3b-instruct",
-            "google/gemini-flash-1.5"
+            "google/gemma-3-27b-it:free",
+            "google/gemini-2.5-flash-preview-05-20",
+            "google/gemini-2.5-flash-preview-05-20:thinking",
+            "meta-llama/llama-4-scout:free"
         ]
     
     async def health_check(self) -> Dict[str, Any]:
