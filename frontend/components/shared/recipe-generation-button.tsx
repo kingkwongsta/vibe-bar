@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Sparkles, Loader2, AlertCircle } from "lucide-react"
 import { useState } from "react"
 import { generateCocktailRecipe } from "@/lib/api"
+import { useSelectedLLM } from "@/components/debug/llm-switcher"
 import type { UserPreferences as ApiUserPreferences } from "@/lib/api"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 import { useFormValidation } from "@/hooks/use-form-validation"
@@ -28,6 +29,7 @@ export function RecipeGenerationButton() {
 
   const [isGenerating, setIsGenerating] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
+  const selectedLLM = useSelectedLLM()
 
   // Function to handle recipe generation via API
   const handleGenerateRecipe = async () => {
@@ -55,9 +57,11 @@ export function RecipeGenerationButton() {
         flavors: selectedFlavors.length > 0 ? selectedFlavors : userPreferences.flavorProfiles,
         vibe: selectedVibe || userPreferences.defaultVibe,
         specialRequests: specialRequests.trim() || undefined,
+        model: selectedLLM, // Include the selected LLM model
       }
 
       console.log('Generating recipe with preferences:', preferences)
+      console.log(`🤖 Using LLM model: ${selectedLLM}`)
 
       // Call the API
       const response = await generateCocktailRecipe(preferences)
