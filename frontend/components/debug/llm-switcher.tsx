@@ -11,38 +11,32 @@ const AVAILABLE_MODELS = [
   {
     id: "openai/gpt-4o-mini",
     name: "GPT-4o Mini",
-    provider: "OpenAI",
-    description: "Fast and efficient, good for most tasks"
+    provider: "OpenAI"
   },
   {
     id: "anthropic/claude-3-haiku",
     name: "Claude 3 Haiku",
-    provider: "Anthropic", 
-    description: "Fast and creative"
+    provider: "Anthropic"
   },
   {
     id: "google/gemma-3-27b-it:free",
     name: "Gemma 3 27B (Free)",
-    provider: "Google",
-    description: "Free Google model, good performance"
+    provider: "Google"
   },
   {
     id: "google/gemini-2.5-flash-preview-05-20",
     name: "Gemini 2.5 Flash Preview",
-    provider: "Google",
-    description: "Latest Gemini preview model"
+    provider: "Google"
   },
   {
     id: "google/gemini-2.5-flash-preview-05-20:thinking",
     name: "Gemini 2.5 Flash (Thinking)",
-    provider: "Google",
-    description: "Gemini with enhanced reasoning"
+    provider: "Google"
   },
   {
     id: "meta-llama/llama-4-scout:free",
     name: "Llama 4 Scout (Free)",
-    provider: "Meta",
-    description: "Latest Llama model, free tier"
+    provider: "Meta"
   }
 ]
 
@@ -118,14 +112,11 @@ export function LLMSwitcher({ onModelChange }: LLMSwitcherProps) {
         <SelectContent>
           {AVAILABLE_MODELS.map((model) => (
             <SelectItem key={model.id} value={model.id}>
-              <div className="flex flex-col items-start">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{model.name}</span>
-                  <Badge variant="outline" className="text-xs px-1 py-0">
-                    {model.provider}
-                  </Badge>
-                </div>
-                <span className="text-xs text-gray-500">{model.description}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{model.name}</span>
+                <Badge variant="outline" className="text-xs px-1 py-0">
+                  {model.provider}
+                </Badge>
               </div>
             </SelectItem>
           ))}
