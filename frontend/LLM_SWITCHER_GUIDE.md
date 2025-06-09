@@ -11,7 +11,7 @@ The debug dialog now includes an LLM switcher that allows you to change which AI
 - **Gemma 3 27B (Free)** (Google) - Free Google model, good performance
 - **Gemini 2.5 Flash Preview** (Google) - Latest Gemini preview model
 - **Gemini 2.5 Flash (Thinking)** (Google) - Gemini with enhanced reasoning
-- **Llama 4 Scout (Free)** (Meta) - Latest Llama model, free tier
+
 
 ### How to Use
 
@@ -63,7 +63,7 @@ The following OpenRouter model identifiers are supported:
 - `google/gemma-3-27b-it:free`
 - `google/gemini-2.5-flash-preview-05-20`
 - `google/gemini-2.5-flash-preview-05-20:thinking`
-- `meta-llama/llama-4-scout:free`
+
 
 ## Development Notes
 - The LLM switcher only appears in development mode

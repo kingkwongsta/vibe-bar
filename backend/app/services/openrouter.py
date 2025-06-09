@@ -184,8 +184,7 @@ class OpenRouterService:
             "anthropic/claude-3-haiku",
             "google/gemma-3-27b-it:free",
             "google/gemini-2.5-flash-preview-05-20",
-            "google/gemini-2.5-flash-preview-05-20:thinking",
-            "meta-llama/llama-4-scout:free"
+            "google/gemini-2.5-flash-preview-05-20:thinking"
         ]
     
     async def health_check(self) -> Dict[str, Any]:

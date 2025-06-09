@@ -32,11 +32,6 @@ const AVAILABLE_MODELS = [
     id: "google/gemini-2.5-flash-preview-05-20:thinking",
     name: "Gemini 2.5 Flash (Thinking)",
     provider: "Google"
-  },
-  {
-    id: "meta-llama/llama-4-scout:free",
-    name: "Llama 4 Scout (Free)",
-    provider: "Meta"
   }
 ]
 
