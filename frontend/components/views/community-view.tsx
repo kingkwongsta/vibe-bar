@@ -37,7 +37,8 @@ export function CommunityView() {
     try {
       setLoading(true)
       setError(null)
-      const response = await getCommunityRecipes(page, 12)
+      // Explicitly sort by created_at desc to show latest recipes first
+      const response = await getCommunityRecipes(page, 12, "created_at", "desc")
       
       if (response.success && response.data) {
         setRecipes(response.data.recipes)
@@ -101,7 +102,11 @@ export function CommunityView() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Recipes</h1>
           <p className="text-gray-600">Discover amazing cocktails created by our community</p>
           {totalCount > 0 && (
-            <p className="text-sm text-gray-500 mt-1">{totalCount} recipes in the community</p>
+            <div className="flex items-center gap-4 mt-2">
+              <p className="text-sm text-gray-500">{totalCount} recipes in the community</p>
+              <span className="text-sm text-gray-400">•</span>
+              <p className="text-sm text-gray-500">Sorted by newest first</p>
+            </div>
           )}
         </div>
 

@@ -123,9 +123,11 @@ class CommunityVibesService:
         self, 
         filters: Optional[CommunityVibeRecipeFilters] = None,
         page: int = 1,
-        per_page: int = 20
+        per_page: int = 20,
+        sort_by: str = "created_at",
+        sort_order: str = "desc"
     ) -> CommunityVibeRecipeList:
-        """Get a paginated list of Community Vibe recipes with optional filtering."""
+        """Get a paginated list of Community Vibe recipes with optional filtering and sorting."""
         try:
             # Build database filters
             db_filters = {"is_public": True, "is_approved": True}
@@ -140,26 +142,29 @@ class CommunityVibesService:
                 if filters.is_featured is not None:
                     db_filters["is_featured"] = filters.is_featured
             
-            # Calculate offset
-            offset = (page - 1) * per_page
-            
-            # Get total count
+            # Get all recipes
             all_recipes = await self.db.get_records(self.table_name, db_filters)
             
             # Apply additional filters that can't be done at DB level
             filtered_recipes = await self._apply_advanced_filters(all_recipes, filters)
             
-            total_count = len(filtered_recipes)
+            # Apply sorting
+            sorted_recipes = await self._apply_sorting(filtered_recipes, sort_by, sort_order)
+            
+            total_count = len(sorted_recipes)
             total_pages = math.ceil(total_count / per_page)
             
             # Apply pagination
-            paginated_recipes = filtered_recipes[offset:offset + per_page]
+            offset = (page - 1) * per_page
+            paginated_recipes = sorted_recipes[offset:offset + per_page]
             
             # Convert to models
             recipes = []
             for record in paginated_recipes:
                 recipe = await self._db_record_to_model(record)
                 recipes.append(recipe)
+            
+            logger.info(f"Retrieved {len(recipes)} recipes (page {page}, sorted by {sort_by} {sort_order})")
             
             return CommunityVibeRecipeList(
                 recipes=recipes,
@@ -384,6 +389,24 @@ class CommunityVibesService:
             ]
         
         return filtered
+    
+    async def _apply_sorting(self, recipes: List[Dict], sort_by: str, sort_order: str) -> List[Dict]:
+        """Apply sorting to the list of recipes."""
+        try:
+            if sort_by == "created_at":
+                return sorted(recipes, key=lambda r: r.get("created_at", ""), reverse=sort_order == "desc")
+            elif sort_by == "rating_average":
+                return sorted(recipes, key=lambda r: r.get("rating_average", 0), reverse=sort_order == "desc")
+            elif sort_by == "prep_time_minutes":
+                return sorted(recipes, key=lambda r: r.get("prep_time_minutes", 0), reverse=sort_order == "desc")
+            elif sort_by == "name":
+                return sorted(recipes, key=lambda r: r.get("name", "").lower(), reverse=sort_order == "desc")
+            else:
+                # Default to created_at sorting
+                return sorted(recipes, key=lambda r: r.get("created_at", ""), reverse=sort_order == "desc")
+        except Exception as e:
+            logger.warning(f"Error sorting recipes: {e}, returning unsorted list")
+            return recipes
     
     async def _increment_view_count(self, recipe_id: UUID) -> None:
         """Increment the view count for a recipe."""

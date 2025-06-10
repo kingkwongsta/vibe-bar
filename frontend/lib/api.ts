@@ -166,11 +166,23 @@ export async function saveCocktailRecipe(data: SaveRecipeData): Promise<ApiRespo
 /**
  * Fetch community recipes from database
  */
-export async function getCommunityRecipes(page: number = 1, per_page: number = 12): Promise<ApiResponse<CommunityRecipeListResponse>> {
+export async function getCommunityRecipes(
+  page: number = 1, 
+  per_page: number = 12,
+  sort_by: string = "created_at",
+  sort_order: string = "desc"
+): Promise<ApiResponse<CommunityRecipeListResponse>> {
   try {
-    console.log('Fetching community recipes:', { page, per_page })
+    console.log('Fetching community recipes:', { page, per_page, sort_by, sort_order })
     
-    const response = await fetch(`${API_BASE_URL}/api/community-vibes/recipes?page=${page}&per_page=${per_page}`, {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: per_page.toString(),
+      sort_by,
+      sort_order
+    })
+    
+    const response = await fetch(`${API_BASE_URL}/api/community-vibes/recipes?${params}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

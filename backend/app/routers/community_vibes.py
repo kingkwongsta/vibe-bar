@@ -127,7 +127,14 @@ async def get_recipes(
         if is_featured is not None:
             filters.is_featured = is_featured
         
-        recipes = await community_service.get_recipes(filters, page, per_page)
+        # Pass sorting parameters to the service
+        recipes = await community_service.get_recipes(
+            filters=filters, 
+            page=page, 
+            per_page=per_page,
+            sort_by=sort_by,
+            sort_order=sort_order
+        )
         
         return APIResponse(
             message="Community Vibe recipes retrieved successfully",
