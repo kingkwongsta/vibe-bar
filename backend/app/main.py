@@ -7,8 +7,15 @@ import uvicorn
 import time
 
 # Import models and services
-from app.models import APIResponse, HealthCheck, UserPreferences, CocktailRecipe
-from app.services import get_openrouter_service, get_cocktail_service, OpenRouterError
+from app.models import (
+    APIResponse, HealthCheck, UserPreferences, CocktailRecipe,
+    CommunityVibeRecipeCreate, CommunityVibeRecipe, CommunityVibeRecipeList,
+    CommunityVibeRecipeFilters, RecipeStats
+)
+from app.services import (
+    get_openrouter_service, get_cocktail_service, get_community_vibes_service,
+    database_service, OpenRouterError
+)
 from app.config import config
 
 # Set up logging
@@ -47,7 +54,8 @@ async def root():
             "features": [
                 "Generate custom cocktail recipes based on user preferences",
                 "Support for various base spirits and flavor profiles",
-                "Personalized recipes based on vibes and dietary restrictions"
+                "Personalized recipes based on vibes and dietary restrictions",
+                "Community Vibes - Save and share user-generated recipes"
             ]
         }
     )
@@ -76,6 +84,20 @@ async def test_endpoint():
             "ai_service_available": config.validate_openrouter_config()
         }
     )
+
+# Database health check endpoint
+@app.get("/api/database/health", response_model=APIResponse)
+async def database_health_check():
+    """Check the health of the database connection"""
+    try:
+        health_status = await database_service.health_check()
+        return APIResponse(
+            message="Database health check completed",
+            data=health_status
+        )
+    except Exception as e:
+        logger.error(f"Database health check failed: {e}")
+        raise HTTPException(status_code=503, detail=f"Database service unavailable: {str(e)}")
 
 # OpenRouter AI health check
 @app.get("/api/ai/health", response_model=APIResponse)
@@ -146,6 +168,198 @@ async def generate_cocktail_recipe(
         logger.error(f"Unexpected error in cocktail generation after {duration:.2f} seconds: {e}")
         print(f"[TIMING] Unexpected error after {duration:.2f} seconds: {e}")
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+# =============================================================================
+# COMMUNITY VIBES TEST ENDPOINTS
+# =============================================================================
+
+@app.get("/api/community-vibes/test", response_model=APIResponse)
+async def test_community_vibes():
+    """Test endpoint to validate Community Vibes backend implementation"""
+    try:
+        community_service = get_community_vibes_service()
+        
+        # Test database connection
+        db_health = await database_service.health_check()
+        
+        # Test getting recipes (should work even with empty database)
+        try:
+            recipes = await community_service.get_recipes(page=1, per_page=5)
+            recipes_available = True
+            recipes_count = recipes.total_count
+        except Exception as e:
+            recipes_available = False
+            recipes_count = 0
+            logger.warning(f"Could not fetch recipes: {e}")
+        
+        # Test community stats
+        try:
+            stats = await community_service.get_community_stats()
+            stats_available = True
+        except Exception as e:
+            stats_available = False
+            stats = None
+            logger.warning(f"Could not fetch stats: {e}")
+        
+        return APIResponse(
+            message="Community Vibes backend test completed",
+            data={
+                "database_connected": db_health.get("connected", False),
+                "database_status": db_health.get("status"),
+                "recipes_service_available": recipes_available,
+                "total_recipes": recipes_count,
+                "stats_service_available": stats_available,
+                "community_stats": stats.model_dump() if stats else None,
+                "supabase_configured": config.validate_supabase_config(),
+                "timestamp": datetime.now(UTC).isoformat()
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Community Vibes test failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Community Vibes test failed: {str(e)}")
+
+@app.post("/api/community-vibes/test-create", response_model=APIResponse)
+async def test_create_community_recipe():
+    """Test endpoint to create a sample Community Vibe recipe"""
+    try:
+        community_service = get_community_vibes_service()
+        
+        # Create a test recipe
+        test_recipe_data = CommunityVibeRecipeCreate(
+            name="API Test Cocktail",
+            description="A test cocktail recipe created via API to validate backend functionality",
+            ingredients=[
+                {"name": "Test Spirit", "amount": "2 oz"},
+                {"name": "Test Mixer", "amount": "1 oz"}
+            ],
+            instructions=[
+                "Combine ingredients in a shaker",
+                "Shake well with ice",
+                "Strain into glass",
+                "Serve immediately"
+            ],
+            creator_name="Backend Test",
+            tags=["test", "api", "validation"],
+            flavor_profile=["balanced"],
+            vibe="Testing Vibes",
+            difficulty_level="Easy",
+            prep_time_minutes=3,
+            servings=1
+        )
+        
+        recipe = await community_service.create_recipe(test_recipe_data)
+        
+        return APIResponse(
+            message="Test Community Vibe recipe created successfully",
+            data={
+                "recipe_id": str(recipe.id),
+                "recipe_name": recipe.name,
+                "created_at": recipe.created_at.isoformat(),
+                "creator": recipe.creator_name,
+                "tags": recipe.tags
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to create test recipe: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to create test recipe: {str(e)}")
+
+@app.get("/api/community-vibes/test-list", response_model=APIResponse)
+async def test_list_community_recipes():
+    """Test endpoint to list Community Vibe recipes"""
+    try:
+        community_service = get_community_vibes_service()
+        
+        # Get recipes with pagination
+        recipes = await community_service.get_recipes(page=1, per_page=10)
+        
+        return APIResponse(
+            message="Community Vibe recipes retrieved successfully",
+            data={
+                "total_recipes": recipes.total_count,
+                "page": recipes.page,
+                "per_page": recipes.per_page,
+                "total_pages": recipes.total_pages,
+                "recipes": [
+                    {
+                        "id": str(recipe.id),
+                        "name": recipe.name,
+                        "description": recipe.description[:100] + "..." if len(recipe.description) > 100 else recipe.description,
+                        "creator": recipe.creator_name,
+                        "tags": recipe.tags,
+                        "difficulty": recipe.difficulty_level,
+                        "rating": recipe.rating_average,
+                        "created_at": recipe.created_at.isoformat()
+                    }
+                    for recipe in recipes.recipes
+                ]
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to list recipes: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to list recipes: {str(e)}")
+
+@app.get("/api/community-vibes/stats", response_model=APIResponse)
+async def get_community_stats():
+    """Get Community Vibes statistics"""
+    try:
+        community_service = get_community_vibes_service()
+        stats = await community_service.get_community_stats()
+        
+        return APIResponse(
+            message="Community statistics retrieved successfully",
+            data=stats.model_dump()
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to get community stats: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get community stats: {str(e)}")
+
+@app.post("/api/community-vibes/save-ai-recipe", response_model=APIResponse)
+async def test_save_ai_recipe():
+    """Test endpoint to save an AI-generated recipe as Community Vibe"""
+    try:
+        # First generate an AI recipe
+        cocktail_service = get_cocktail_service()
+        community_service = get_community_vibes_service()
+        
+        # Test preferences
+        test_preferences = UserPreferences(
+            ingredients=["gin"],
+            flavors=["botanical", "fresh"],
+            vibe="relaxing evening",
+            specialRequests="light and refreshing"
+        )
+        
+        # Generate AI recipe
+        ai_recipe = await cocktail_service.generate_cocktail_recipe(test_preferences)
+        
+        # Save as Community Vibe
+        community_recipe = await community_service.create_recipe_from_ai_generation(
+            ai_recipe=ai_recipe,
+            user_preferences=test_preferences,
+            creator_name="AI Recipe Test User",
+            creator_email="test@vibes-bar.com"
+        )
+        
+        return APIResponse(
+            message="AI-generated recipe saved as Community Vibe successfully",
+            data={
+                "original_ai_recipe": ai_recipe.recipeTitle,
+                "community_recipe_id": str(community_recipe.id),
+                "community_recipe_name": community_recipe.name,
+                "creator": community_recipe.creator_name,
+                "vibe": community_recipe.vibe,
+                "ai_model_used": community_recipe.ai_model_used,
+                "created_at": community_recipe.created_at.isoformat()
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to save AI recipe as Community Vibe: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to save AI recipe: {str(e)}")
 
 if __name__ == "__main__":
     # Use configuration for server settings
