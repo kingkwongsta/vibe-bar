@@ -41,7 +41,7 @@ export const NavigationBarZustand = React.memo(function NavigationBarZustand() {
               }`}
             >
               <Home className="h-4 w-4 inline mr-1" />
-              Generate
+              Create
             </button>
             <button
               onClick={() => setCurrentView("saved")}

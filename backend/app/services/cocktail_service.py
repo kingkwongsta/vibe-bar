@@ -48,7 +48,9 @@ You must respond with ONLY a valid JSON object in this exact format:
   ]
 }
 
-Create a creative, delicious cocktail recipe."""
+IMPORTANT: For the recipeTitle, create sophisticated, unique, and memorable cocktail names that sound like they could be classic cocktails or belong in a high-end speakeasy. Avoid generic names like "Whiskey Sour" or "Sweet Delight". Instead, use creative names like "Ramos Gin Fizz", "Vieux Carré", "Blood and Sand", "Corpse Reviver #2", or "Commonwealth". The name should be intriguing, sophisticated, and tell a story or evoke imagery.
+
+Create a creative, delicious cocktail recipe with an exceptional name."""
 
             # Build user prompt from preferences
             user_prompt = "Create a cocktail recipe with these preferences:\n"

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, UTC
 import logging
 import uvicorn
+import time
 
 # Import models and services
 from app.models import APIResponse, HealthCheck, UserPreferences, CocktailRecipe
@@ -111,10 +112,20 @@ async def generate_cocktail_recipe(
     cocktail_service = Depends(get_cocktail_service)
 ):
     """Generate a cocktail recipe based on user preferences"""
+    # Start timing the request
+    start_time = time.time()
+    
     try:
         logger.info(f"Generating cocktail recipe for preferences: {preferences}")
+        print(f"[TIMING] Starting cocktail generation at {datetime.now(UTC).strftime('%H:%M:%S')}")
         
         recipe = await cocktail_service.generate_cocktail_recipe(preferences)
+        
+        # Calculate and log the request duration
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.info(f"Cocktail recipe generation completed in {duration:.2f} seconds")
+        print(f"[TIMING] Cocktail recipe generation completed in {duration:.2f} seconds")
         
         return APIResponse(
             message="Cocktail recipe generated successfully",
@@ -122,10 +133,18 @@ async def generate_cocktail_recipe(
         )
         
     except OpenRouterError as e:
-        logger.error(f"OpenRouter error in cocktail generation: {e}")
+        # Log duration even on error
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.error(f"OpenRouter error in cocktail generation after {duration:.2f} seconds: {e}")
+        print(f"[TIMING] OpenRouter error after {duration:.2f} seconds: {e}")
         raise HTTPException(status_code=503, detail=f"AI service error: {str(e)}")
     except Exception as e:
-        logger.error(f"Unexpected error in cocktail generation: {e}")
+        # Log duration even on error
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.error(f"Unexpected error in cocktail generation after {duration:.2f} seconds: {e}")
+        print(f"[TIMING] Unexpected error after {duration:.2f} seconds: {e}")
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
 if __name__ == "__main__":

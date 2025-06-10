@@ -13,11 +13,16 @@ import {
   Zap,
   Sparkles,
 } from "lucide-react"
-import React from "react"
+import React, { useEffect } from "react"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
 export function RecipeView() {
   const { setCurrentView, generatedRecipe, resetForm } = useVibeBarContext()
+  
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
   // Handler for back to recipe creator that resets form
   const handleBackToRecipeCreator = () => {
     resetForm()
