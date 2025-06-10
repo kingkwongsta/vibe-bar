@@ -55,7 +55,7 @@ class DatabaseService:
         
         try:
             # Try a simple query to test the connection
-            response = self._client.table("recipes").select("id").limit(1).execute()
+            response = self._client.table("community_vibes_recipes").select("id").limit(1).execute()
             return {
                 "status": "success",
                 "message": "Database connection healthy",

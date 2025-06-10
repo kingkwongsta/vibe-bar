@@ -6,6 +6,9 @@ import logging
 import uvicorn
 import time
 
+# Import routers
+from app.routers import community_vibes
+
 # Import models and services
 from app.models import (
     APIResponse, HealthCheck, UserPreferences, CocktailRecipe,
@@ -25,8 +28,8 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title="Vibe Bar API - AI Cocktail Recipe Generator",
-    description="AI-Powered Cocktail Recipe Generation using OpenRouter LLM",
-    version="2.0.0",
+    description="AI-Powered Cocktail Recipe Generation using OpenRouter LLM with Community Vibes",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -40,23 +43,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(community_vibes.router)
+
 # Root endpoint
 @app.get("/", response_model=APIResponse)
 async def root():
     """Root endpoint returning API information"""
     return APIResponse(
-        message="Welcome to Vibe Bar - AI Cocktail Recipe Generator",
+        message="Welcome to Vibe Bar - AI Cocktail Recipe Generator with Community Vibes",
         data={
             "api_name": "Vibe Bar Cocktail Recipe Generator",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "description": "AI-Powered Cocktail Recipe Generation using OpenRouter LLM",
             "docs_url": "/docs",
             "features": [
                 "Generate custom cocktail recipes based on user preferences",
                 "Support for various base spirits and flavor profiles",
                 "Personalized recipes based on vibes and dietary restrictions",
-                "Community Vibes - Save and share user-generated recipes"
-            ]
+                "Community Vibes - Save and share user-generated recipes",
+                "Recipe rating and review system",
+                "Search and discovery features",
+                "Community statistics and insights"
+            ],
+            "endpoints": {
+                "ai_generation": "/api/cocktails/generate",
+                "community_vibes": "/api/community-vibes/recipes",
+                "search": "/api/community-vibes/recipes/search",
+                "stats": "/api/community-vibes/stats"
+            }
         }
     )
 
@@ -68,7 +83,7 @@ async def health_check():
         status="healthy",
         timestamp=datetime.now(UTC),
         service="vibe-bar-cocktail-api",
-        version="2.0.0"
+        version="2.1.0"
     )
 
 # Test endpoint for frontend connectivity
@@ -81,7 +96,9 @@ async def test_endpoint():
             "timestamp": datetime.now(UTC).isoformat(),
             "cors_working": True,
             "cocktail_service_available": True,
-            "ai_service_available": config.validate_openrouter_config()
+            "ai_service_available": config.validate_openrouter_config(),
+            "database_available": database_service.is_connected(),
+            "community_vibes_available": True
         }
     )
 
@@ -170,7 +187,7 @@ async def generate_cocktail_recipe(
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
 # =============================================================================
-# COMMUNITY VIBES TEST ENDPOINTS
+# COMMUNITY VIBES TEST ENDPOINTS (keeping for backward compatibility)
 # =============================================================================
 
 @app.get("/api/community-vibes/test", response_model=APIResponse)
@@ -211,6 +228,7 @@ async def test_community_vibes():
                 "stats_service_available": stats_available,
                 "community_stats": stats.model_dump() if stats else None,
                 "supabase_configured": config.validate_supabase_config(),
+                "production_endpoints_available": True,
                 "timestamp": datetime.now(UTC).isoformat()
             }
         )
@@ -300,22 +318,6 @@ async def test_list_community_recipes():
     except Exception as e:
         logger.error(f"Failed to list recipes: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to list recipes: {str(e)}")
-
-@app.get("/api/community-vibes/stats", response_model=APIResponse)
-async def get_community_stats():
-    """Get Community Vibes statistics"""
-    try:
-        community_service = get_community_vibes_service()
-        stats = await community_service.get_community_stats()
-        
-        return APIResponse(
-            message="Community statistics retrieved successfully",
-            data=stats.model_dump()
-        )
-        
-    except Exception as e:
-        logger.error(f"Failed to get community stats: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get community stats: {str(e)}")
 
 @app.post("/api/community-vibes/save-ai-recipe", response_model=APIResponse)
 async def test_save_ai_recipe():
