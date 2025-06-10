@@ -30,6 +30,58 @@ export interface CocktailRecipe {
   recipeDetails: Array<{ title: string; content: string }>
 }
 
+export interface SaveRecipeData {
+  recipe: CocktailRecipe
+  preferences: UserPreferences
+  creator?: {
+    name?: string
+    email?: string
+  }
+}
+
+export interface SavedRecipeResponse {
+  recipe_id: string
+  recipe_name: string
+  creator: string
+  created_at: string
+  vibe?: string
+  ai_model_used?: string
+}
+
+// Community recipe interfaces
+export interface CommunityRecipe {
+  id: string
+  name: string
+  description: string
+  ingredients: Array<{ name: string; amount: string }>
+  instructions: string[]
+  meta: Array<{ text: string }>
+  details: Array<{ title: string; content: string }>
+  creator_name?: string
+  creator_email?: string
+  tags: string[]
+  flavor_profile: string[]
+  vibe?: string
+  difficulty_level?: string
+  prep_time_minutes?: number
+  servings?: number
+  rating_average?: number
+  rating_count?: number
+  view_count?: number
+  favorite_count?: number
+  ai_model_used?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface CommunityRecipeListResponse {
+  recipes: CommunityRecipe[]
+  total_count: number
+  page: number
+  per_page: number
+  total_pages: number
+}
+
 /**
  * Test backend connectivity
  */
@@ -79,5 +131,74 @@ export async function generateCocktailRecipe(preferences: UserPreferences): Prom
   } catch (error) {
     console.error('Cocktail recipe generation failed:', error)
     throw new Error(`Failed to generate recipe: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+/**
+ * Save cocktail recipe to database
+ */
+export async function saveCocktailRecipe(data: SaveRecipeData): Promise<ApiResponse<SavedRecipeResponse>> {
+  try {
+    console.log('Saving recipe to backend:', { data })
+    
+    const response = await fetch(`${API_BASE_URL}/api/cocktails/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`)
+    }
+
+    const result = await response.json()
+    console.log('Recipe saved successfully:', result)
+    return result
+  } catch (error) {
+    console.error('Recipe saving failed:', error)
+    throw new Error(`Failed to save recipe: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+/**
+ * Fetch community recipes from database
+ */
+export async function getCommunityRecipes(
+  page: number = 1, 
+  per_page: number = 12,
+  sort_by: string = "created_at",
+  sort_order: string = "desc"
+): Promise<ApiResponse<CommunityRecipeListResponse>> {
+  try {
+    console.log('Fetching community recipes:', { page, per_page, sort_by, sort_order })
+    
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: per_page.toString(),
+      sort_by,
+      sort_order
+    })
+    
+    const response = await fetch(`${API_BASE_URL}/api/community-vibes/recipes?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`)
+    }
+
+    const result = await response.json()
+    console.log('Community recipes fetched:', result)
+    return result
+  } catch (error) {
+    console.error('Community recipes fetch failed:', error)
+    throw new Error(`Failed to fetch community recipes: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 } 

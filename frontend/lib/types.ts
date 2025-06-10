@@ -15,7 +15,7 @@ export interface CocktailFormData {
   specialRequests?: string
 }
 
-export type ViewType = "landing" | "recipe" | "saved" | "profile"
+export type ViewType = "landing" | "recipe" | "saved" | "profile" | "community"
 
 export interface BarInventory {
   spirits: string[]

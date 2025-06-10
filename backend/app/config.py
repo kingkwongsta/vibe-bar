@@ -31,6 +31,11 @@ class Config:
     AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.7"))
     AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "1000"))
     
+    # Supabase Configuration
+    SUPABASE_URL: Optional[str] = os.getenv("SUPABASE_URL")
+    SUPABASE_ANON_KEY: Optional[str] = os.getenv("SUPABASE_ANON_KEY")
+    SUPABASE_SERVICE_KEY: Optional[str] = os.getenv("SUPABASE_SERVICE_KEY")
+    
     @classmethod
     def is_development(cls) -> bool:
         """Check if running in development mode."""
@@ -45,6 +50,14 @@ class Config:
     def validate_openrouter_config(cls) -> bool:
         """Validate that OpenRouter is properly configured."""
         return cls.OPENROUTER_API_KEY is not None and cls.OPENROUTER_API_KEY.strip() != ""
+    
+    @classmethod
+    def validate_supabase_config(cls) -> bool:
+        """Validate that Supabase is properly configured."""
+        return (
+            cls.SUPABASE_URL is not None and cls.SUPABASE_URL.strip() != "" and
+            cls.SUPABASE_ANON_KEY is not None and cls.SUPABASE_ANON_KEY.strip() != ""
+        )
 
 # Global config instance
 config = Config() 

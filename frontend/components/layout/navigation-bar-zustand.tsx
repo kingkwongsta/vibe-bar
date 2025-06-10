@@ -1,6 +1,5 @@
 import React from "react"
-import { Wine, Home, Heart, User, Share2, Link } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Wine, Home, Link } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCurrentView, useVibeBarStore } from "@/store/vibe-bar-store"
 import { useShareableUrl } from "@/hooks/use-url-sync"
@@ -43,28 +42,6 @@ export const NavigationBarZustand = React.memo(function NavigationBarZustand() {
               <Home className="h-4 w-4 inline mr-1" />
               Create
             </button>
-            <button
-              onClick={() => setCurrentView("saved")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "saved" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <Heart className="h-4 w-4 inline mr-1" />
-              Saved
-            </button>
-            <button
-              onClick={() => setCurrentView("profile")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "profile" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <User className="h-4 w-4 inline mr-1" />
-              Profile
-            </button>
             
             {/* Share button */}
             <Button
@@ -85,21 +62,8 @@ export const NavigationBarZustand = React.memo(function NavigationBarZustand() {
               variant="outline"
               size="sm"
             >
-              <Share2 className="h-4 w-4" />
+              <Link className="h-4 w-4" />
             </Button>
-            
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </div>
-
-          {/* Desktop avatar */}
-          <div className="hidden md:block">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
           </div>
         </div>
       </div>

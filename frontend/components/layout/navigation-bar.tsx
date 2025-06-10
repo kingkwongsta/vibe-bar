@@ -1,16 +1,21 @@
 import React from "react"
-import { Wine, Sparkles, Heart, User } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Wine, Sparkles, Users } from "lucide-react"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
 export const NavigationBar = React.memo(function NavigationBar() {
-  const { currentView, setCurrentView } = useVibeBarContext()
+  const { currentView, setCurrentView, resetForm } = useVibeBarContext()
+  
+  const handleCreateClick = () => {
+    resetForm()
+    setCurrentView("landing")
+  }
+
   return (
     <nav className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <button 
-            onClick={() => setCurrentView("landing")}
+            onClick={handleCreateClick}
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
             <Wine className="h-8 w-8 text-amber-600" />
@@ -21,7 +26,7 @@ export const NavigationBar = React.memo(function NavigationBar() {
 
           <div className="hidden md:flex items-center space-x-8">
             <button
-              onClick={() => setCurrentView("landing")}
+              onClick={handleCreateClick}
               className={`text-sm font-medium transition-colors ${
                 currentView === "landing" 
                   ? "text-amber-600" 
@@ -32,33 +37,17 @@ export const NavigationBar = React.memo(function NavigationBar() {
               Create
             </button>
             <button
-              onClick={() => setCurrentView("saved")}
+              onClick={() => setCurrentView("community")}
               className={`text-sm font-medium transition-colors ${
-                currentView === "saved" 
+                currentView === "community" 
                   ? "text-amber-600" 
                   : "text-gray-600 hover:text-amber-600"
               }`}
             >
-              <Heart className="h-4 w-4 inline mr-1" />
-              Saved
-            </button>
-            <button
-              onClick={() => setCurrentView("profile")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "profile" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <User className="h-4 w-4 inline mr-1" />
-              Profile
+              <Users className="h-4 w-4 inline mr-1" />
+              Community
             </button>
           </div>
-
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder.svg?height=32&width=32" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
         </div>
       </div>
     </nav>
