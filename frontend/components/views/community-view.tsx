@@ -9,9 +9,7 @@ import { NavigationBar } from "@/components/layout/navigation-bar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Search,
-  Star,
   Clock,
-  Share2,
   Users,
   Zap,
   AlertCircle,
@@ -21,6 +19,7 @@ import {
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 import { useState, useEffect } from "react"
 import { getCommunityRecipes, type CommunityRecipe } from "@/lib/api"
+import { INGREDIENTS } from "@/lib/constants"
 
 export function CommunityView() {
   const { setCurrentView } = useVibeBarContext()
@@ -30,7 +29,7 @@ export function CommunityView() {
   const [totalCount, setTotalCount] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
-  const [ratingFilter, setRatingFilter] = useState("all")
+  const [spiritFilter, setSpiritFilter] = useState("all")
   
   // Fetch community recipes
   const fetchRecipes = async (page: number = 1) => {
@@ -60,17 +59,19 @@ export function CommunityView() {
     fetchRecipes()
   }, [])
 
-  // Filter recipes based on search and rating
+  // Filter recipes based on search and spirit
   const filteredRecipes = recipes.filter(recipe => {
     const matchesSearch = searchTerm === "" || 
       recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       recipe.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     
-    const matchesRating = ratingFilter === "all" || 
-      (recipe.rating_average && recipe.rating_average >= parseInt(ratingFilter))
+    const matchesSpirit = spiritFilter === "all" || 
+      recipe.name.toLowerCase().includes(spiritFilter.toLowerCase()) ||
+      recipe.description.toLowerCase().includes(spiritFilter.toLowerCase()) ||
+      recipe.tags.some(tag => tag.toLowerCase().includes(spiritFilter.toLowerCase()))
     
-    return matchesSearch && matchesRating
+    return matchesSearch && matchesSpirit
   })
 
   // Format date
@@ -92,6 +93,26 @@ export function CommunityView() {
       default: return 'bg-gray-100 text-gray-800'
     }
   }
+
+  // Detect the primary spirit in a recipe
+  const detectSpirit = (recipe: CommunityRecipe): string | null => {
+    const searchText = `${recipe.name} ${recipe.description} ${recipe.tags.join(' ')}`.toLowerCase()
+    
+    // Check each ingredient (spirit) to see if it appears in the recipe
+    for (const ingredient of INGREDIENTS) {
+      if (ingredient.toLowerCase() !== 'non-alcoholic' && 
+          searchText.includes(ingredient.toLowerCase())) {
+        return ingredient
+      }
+    }
+    
+    // Check for non-alcoholic last
+    if (searchText.includes('non-alcoholic') || searchText.includes('mocktail')) {
+      return 'Non-Alcoholic'
+    }
+    
+    return null
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -104,8 +125,6 @@ export function CommunityView() {
           {totalCount > 0 && (
             <div className="flex items-center gap-4 mt-2">
               <p className="text-sm text-gray-500">{totalCount} recipes in the community</p>
-              <span className="text-sm text-gray-400">•</span>
-              <p className="text-sm text-gray-500">Sorted by newest first</p>
             </div>
           )}
         </div>
@@ -133,15 +152,19 @@ export function CommunityView() {
                   />
                 </div>
               </div>
-              <Select value={ratingFilter} onValueChange={setRatingFilter}>
+              <Select value={spiritFilter} onValueChange={setSpiritFilter}>
                 <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by rating" />
+                  <SelectValue placeholder="Filter by spirit" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All ratings</SelectItem>
-                  <SelectItem value="5">5 stars</SelectItem>
-                  <SelectItem value="4">4+ stars</SelectItem>
-                  <SelectItem value="3">3+ stars</SelectItem>
+                  <SelectItem value="all">All spirits</SelectItem>
+                  <SelectItem value="vodka">Vodka</SelectItem>
+                  <SelectItem value="gin">Gin</SelectItem>
+                  <SelectItem value="rum">Rum</SelectItem>
+                  <SelectItem value="tequila">Tequila</SelectItem>
+                  <SelectItem value="whiskey">Whiskey</SelectItem>
+                  <SelectItem value="bourbon">Bourbon</SelectItem>
+                  <SelectItem value="non-alcoholic">Non-Alcoholic</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -168,22 +191,8 @@ export function CommunityView() {
                 className="hover:shadow-lg transition-shadow cursor-pointer bg-white/90 backdrop-blur-sm border-0"
               >
                 <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                    <div className="flex">
-                      {recipe.rating_average ? (
-                        [...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${i < Math.floor(recipe.rating_average!) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                          />
-                        ))
-                      ) : (
-                        <span className="text-xs text-gray-500">No ratings yet</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 text-xs text-gray-600 mb-2">
+                  <CardTitle className="text-lg mb-2">{recipe.name}</CardTitle>
+                  <div className="flex gap-6 text-xs text-gray-600 mb-2">
                     {recipe.prep_time_minutes && (
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -196,12 +205,18 @@ export function CommunityView() {
                         {recipe.creator_name}
                       </span>
                     )}
+                    <span>{formatDate(recipe.created_at)}</span>
                   </div>
                   <p className="text-sm text-gray-600 line-clamp-2">{recipe.description}</p>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-4">
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-1">
+                      {detectSpirit(recipe) && (
+                        <Badge className="text-xs bg-orange-100 text-orange-800">
+                          {detectSpirit(recipe)}
+                        </Badge>
+                      )}
                       {recipe.difficulty_level && (
                         <Badge className={`text-xs ${getDifficultyColor(recipe.difficulty_level)}`}>
                           {recipe.difficulty_level}
@@ -212,8 +227,6 @@ export function CommunityView() {
                           {recipe.vibe}
                         </Badge>
                       )}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
                       {recipe.tags.slice(0, 3).map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-xs">
                           {tag}
@@ -226,21 +239,9 @@ export function CommunityView() {
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
-                    <span>{formatDate(recipe.created_at)}</span>
-                    {recipe.ai_model_used && (
-                      <span className="flex items-center gap-1">
-                        <Zap className="h-3 w-3" />
-                        AI Generated
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" className="flex-1" onClick={() => setCurrentView("recipe")}>
+                  <div>
+                    <Button size="sm" className="w-full bg-orange-400 hover:bg-orange-600 text-white" onClick={() => setCurrentView("recipe")}>
                       View Recipe
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Share2 className="h-3 w-3" />
                     </Button>
                   </div>
                 </CardContent>
@@ -255,15 +256,15 @@ export function CommunityView() {
             <CardContent>
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {searchTerm || ratingFilter !== "all" ? "No recipes match your search" : "No community recipes yet"}
+                {searchTerm || spiritFilter !== "all" ? "No recipes match your search" : "No community recipes yet"}
               </h3>
               <p className="text-gray-600 mb-4">
-                {searchTerm || ratingFilter !== "all" 
+                {searchTerm || spiritFilter !== "all" 
                   ? "Try adjusting your search terms or filters" 
                   : "Be the first to share a cocktail with the community!"
                 }
               </p>
-              {(!searchTerm && ratingFilter === "all") && (
+              {(!searchTerm && spiritFilter === "all") && (
                 <Button onClick={() => setCurrentView("landing")}>
                   <Zap className="h-4 w-4 mr-2" />
                   Create Your First Recipe
