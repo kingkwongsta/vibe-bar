@@ -1,5 +1,5 @@
 import React from "react"
-import { Wine, Home, Heart, User } from "lucide-react"
+import { Wine, Sparkles, Heart, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
@@ -28,7 +28,7 @@ export const NavigationBar = React.memo(function NavigationBar() {
                   : "text-gray-600 hover:text-amber-600"
               }`}
             >
-              <Home className="h-4 w-4 inline mr-1" />
+              <Sparkles className="h-4 w-4 inline mr-1" />
               Create
             </button>
             <button
