@@ -1,6 +1,5 @@
 import React from "react"
-import { Wine, Sparkles, Heart, User, Users } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Wine, Sparkles, Users } from "lucide-react"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 
 export const NavigationBar = React.memo(function NavigationBar() {
@@ -42,34 +41,7 @@ export const NavigationBar = React.memo(function NavigationBar() {
               <Users className="h-4 w-4 inline mr-1" />
               Community
             </button>
-            <button
-              onClick={() => setCurrentView("saved")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "saved" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <Heart className="h-4 w-4 inline mr-1" />
-              Saved
-            </button>
-            <button
-              onClick={() => setCurrentView("profile")}
-              className={`text-sm font-medium transition-colors ${
-                currentView === "profile" 
-                  ? "text-amber-600" 
-                  : "text-gray-600 hover:text-amber-600"
-              }`}
-            >
-              <User className="h-4 w-4 inline mr-1" />
-              Profile
-            </button>
           </div>
-
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder.svg?height=32&width=32" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
         </div>
       </div>
     </nav>

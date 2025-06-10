@@ -6,8 +6,6 @@ import { useCurrentView, useFormState, useFormActions } from '@/store/vibe-bar-s
 import { NavigationBarZustand } from '@/components/layout/navigation-bar-zustand'
 import { LandingView } from '@/components/views/landing-view'
 import { RecipeView } from '@/components/views/recipe-view'
-import { SavedRecipesView } from '@/components/views/saved-recipes-view'
-import { ProfileView } from '@/components/views/profile-view'
 import { ErrorBoundary } from '@/components/shared/error-boundary'
 import { PerformanceMonitor } from '@/components/debug/performance-monitor'
 
@@ -93,10 +91,6 @@ export function AppWithUrlSync() {
     switch (currentView) {
       case 'recipe':
         return <RecipeView />
-      case 'saved':
-        return <SavedRecipesView />
-      case 'profile':
-        return <ProfileView />
       case 'landing':
       default:
         return <LandingView />
