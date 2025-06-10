@@ -48,6 +48,40 @@ export interface SavedRecipeResponse {
   ai_model_used?: string
 }
 
+// Community recipe interfaces
+export interface CommunityRecipe {
+  id: string
+  name: string
+  description: string
+  ingredients: Array<{ name: string; amount: string }>
+  instructions: string[]
+  meta: Array<{ text: string }>
+  details: Array<{ title: string; content: string }>
+  creator_name?: string
+  creator_email?: string
+  tags: string[]
+  flavor_profile: string[]
+  vibe?: string
+  difficulty_level?: string
+  prep_time_minutes?: number
+  servings?: number
+  rating_average?: number
+  rating_count?: number
+  view_count?: number
+  favorite_count?: number
+  ai_model_used?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface CommunityRecipeListResponse {
+  recipes: CommunityRecipe[]
+  total_count: number
+  page: number
+  per_page: number
+  total_pages: number
+}
+
 /**
  * Test backend connectivity
  */
@@ -126,5 +160,33 @@ export async function saveCocktailRecipe(data: SaveRecipeData): Promise<ApiRespo
   } catch (error) {
     console.error('Recipe saving failed:', error)
     throw new Error(`Failed to save recipe: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+/**
+ * Fetch community recipes from database
+ */
+export async function getCommunityRecipes(page: number = 1, per_page: number = 12): Promise<ApiResponse<CommunityRecipeListResponse>> {
+  try {
+    console.log('Fetching community recipes:', { page, per_page })
+    
+    const response = await fetch(`${API_BASE_URL}/api/community-vibes/recipes?page=${page}&per_page=${per_page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`)
+    }
+
+    const result = await response.json()
+    console.log('Community recipes fetched:', result)
+    return result
+  } catch (error) {
+    console.error('Community recipes fetch failed:', error)
+    throw new Error(`Failed to fetch community recipes: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 } 

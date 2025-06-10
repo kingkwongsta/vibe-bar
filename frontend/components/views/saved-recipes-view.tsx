@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NavigationBar } from "@/components/layout/navigation-bar"
 import {
   Search,
-  Star,
   Clock,
   Share2,
   Heart,
@@ -21,42 +20,42 @@ const savedRecipes = [
   {
     id: 1,
     name: "Sunset Serenity",
-    rating: 5,
+    spirit: "Tequila",
     time: "3 min",
     ingredients: ["Tequila", "Pineapple", "Lime", "Jalapeño"]
   },
   {
     id: 2,
     name: "Midnight Manhattan",
-    rating: 4,
+    spirit: "Whiskey",
     time: "5 min",
     ingredients: ["Whiskey", "Vermouth", "Bitters", "Cherry"]
   },
   {
     id: 3,
     name: "Tropical Storm",
-    rating: 5,
+    spirit: "Rum",
     time: "4 min",
     ingredients: ["Rum", "Coconut", "Mango", "Lime"]
   },
   {
     id: 4,
     name: "Smoky Old Soul",
-    rating: 4,
+    spirit: "Bourbon",
     time: "8 min",
     ingredients: ["Bourbon", "Maple", "Orange", "Rosemary"]
   },
   {
     id: 5,
     name: "Garden Gimlet",
-    rating: 3,
+    spirit: "Gin",
     time: "6 min",
     ingredients: ["Gin", "Cucumber", "Basil", "Lime"]
   },
   {
     id: 6,
     name: "Spiced Pear Fizz",
-    rating: 5,
+    spirit: "Vodka",
     time: "4 min",
     ingredients: ["Vodka", "Pear", "Cinnamon", "Ginger"]
   }
@@ -87,13 +86,16 @@ export function SavedRecipesView() {
               </div>
               <Select>
                 <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by rating" />
+                  <SelectValue placeholder="Filter by spirit" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All ratings</SelectItem>
-                  <SelectItem value="5">5 stars</SelectItem>
-                  <SelectItem value="4">4+ stars</SelectItem>
-                  <SelectItem value="3">3+ stars</SelectItem>
+                  <SelectItem value="all">All spirits</SelectItem>
+                  <SelectItem value="gin">Gin</SelectItem>
+                  <SelectItem value="whiskey">Whiskey</SelectItem>
+                  <SelectItem value="bourbon">Bourbon</SelectItem>
+                  <SelectItem value="rum">Rum</SelectItem>
+                  <SelectItem value="tequila">Tequila</SelectItem>
+                  <SelectItem value="vodka">Vodka</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -110,20 +112,13 @@ export function SavedRecipesView() {
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${i < recipe.rating ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                      />
-                    ))}
-                  </div>
                 </div>
                 <div className="flex gap-2 text-xs text-gray-600">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {recipe.time}
                   </span>
+                  <span>• {recipe.spirit}</span>
                 </div>
               </CardHeader>
               <CardContent>

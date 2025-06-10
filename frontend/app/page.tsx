@@ -3,6 +3,7 @@
 import { LandingView } from "@/components/views/landing-view"
 import { RecipeView } from "@/components/views/recipe-view"
 import { SavedRecipesView } from "@/components/views/saved-recipes-view"
+import { CommunityView } from "@/components/views/community-view"
 import { ProfileView } from "@/components/views/profile-view"
 import { DevLogger } from "@/components/debug/dev-logger"
 import { useVibeBarContext } from "./context/vibe-bar-context"
@@ -21,6 +22,9 @@ export default function VibeBarApp() {
       
       case "saved":
         return <SavedRecipesView />
+      
+      case "community":
+        return <CommunityView />
       
       case "profile":
         return <ProfileView />
