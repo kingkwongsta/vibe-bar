@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, UTC
 import logging
 import uvicorn
+import time
 
 # Import models and services
 from app.models import APIResponse, HealthCheck, UserPreferences, CocktailRecipe
