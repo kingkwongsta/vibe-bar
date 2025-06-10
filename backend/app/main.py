@@ -187,6 +187,97 @@ async def generate_cocktail_recipe(
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
 # =============================================================================
+# RECIPE SAVING ENDPOINT
+# =============================================================================
+
+@app.post("/api/cocktails/save", response_model=APIResponse)
+async def save_cocktail_recipe(
+    data: dict = Body(
+        ...,
+        example={
+            "recipe": {
+                "recipeTitle": "Midnight Garden",
+                "recipeDescription": "A sophisticated gin-based cocktail",
+                "recipeMeta": [{"text": "5 min prep"}, {"text": "Easy"}, {"text": "1 serving"}],
+                "recipeIngredients": [{"name": "Gin", "amount": "2 oz"}],
+                "recipeInstructions": ["Combine ingredients", "Stir and serve"],
+                "recipeDetails": [{"title": "Glassware", "content": "Coupe glass"}]
+            },
+            "preferences": {
+                "ingredients": ["gin"],
+                "flavors": ["botanical"],
+                "vibe": "relaxing",
+                "model": "anthropic/claude-3-haiku"
+            },
+            "creator": {
+                "name": "John Doe",
+                "email": "john@example.com"
+            }
+        }
+    ),
+    community_service = Depends(get_community_vibes_service)
+):
+    """Save a generated cocktail recipe to the database"""
+    try:
+        # Extract data from request
+        recipe_data = data.get("recipe")
+        preferences_data = data.get("preferences", {})
+        creator_data = data.get("creator", {})
+        
+        if not recipe_data:
+            raise HTTPException(status_code=400, detail="Recipe data is required")
+        
+        # Convert recipe data to CocktailRecipe model
+        from app.models.cocktail import CocktailRecipe, RecipeMeta, RecipeIngredient, RecipeDetail
+        
+        recipe = CocktailRecipe(
+            recipeTitle=recipe_data.get("recipeTitle", ""),
+            recipeDescription=recipe_data.get("recipeDescription", ""),
+            recipeMeta=[RecipeMeta(text=meta.get("text", "")) for meta in recipe_data.get("recipeMeta", [])],
+            recipeIngredients=[RecipeIngredient(name=ing.get("name", ""), amount=ing.get("amount", "")) for ing in recipe_data.get("recipeIngredients", [])],
+            recipeInstructions=recipe_data.get("recipeInstructions", []),
+            recipeDetails=[RecipeDetail(title=detail.get("title", ""), content=detail.get("content", "")) for detail in recipe_data.get("recipeDetails", [])]
+        )
+        
+        # Convert preferences to UserPreferences model
+        preferences = UserPreferences(
+            ingredients=preferences_data.get("ingredients", []),
+            customIngredients=preferences_data.get("customIngredients"),
+            flavors=preferences_data.get("flavors", []),
+            vibe=preferences_data.get("vibe"),
+            specialRequests=preferences_data.get("specialRequests"),
+            model=preferences_data.get("model")
+        )
+        
+        # Save the recipe to database
+        saved_recipe = await community_service.create_recipe_from_ai_generation(
+            ai_recipe=recipe,
+            user_preferences=preferences,
+            creator_name=creator_data.get("name", "Anonymous"),
+            creator_email=creator_data.get("email")
+        )
+        
+        logger.info(f"Successfully saved recipe: {saved_recipe.name} (ID: {saved_recipe.id})")
+        
+        return APIResponse(
+            message="Recipe saved successfully",
+            data={
+                "recipe_id": str(saved_recipe.id),
+                "recipe_name": saved_recipe.name,
+                "creator": saved_recipe.creator_name,
+                "created_at": saved_recipe.created_at.isoformat(),
+                "vibe": saved_recipe.vibe,
+                "ai_model_used": saved_recipe.ai_model_used
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to save recipe: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to save recipe: {str(e)}")
+
+# =============================================================================
 # COMMUNITY VIBES TEST ENDPOINTS (keeping for backward compatibility)
 # =============================================================================
 

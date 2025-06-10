@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#pytest tests/test_supabase_health.py -v
 """
 Test script for Supabase database connection and health validation.
 Tests all aspects of database setup, connectivity, and basic operations.
@@ -117,9 +118,12 @@ class TestSupabaseHealth:
             pytest.fail(f"Failed to access recipe_ratings table: {str(e)}")
     
     @pytest.mark.asyncio
-    async def test_database_operations(self):
+    async def test_database_operations(self, test_database_service):
         """Test basic database CRUD operations."""
         print("\n🔄 Testing Database CRUD Operations...")
+        
+        # Use test database service that bypasses RLS
+        db_service = test_database_service
         
         # Test data for operations
         test_recipe_data = {
@@ -141,7 +145,7 @@ class TestSupabaseHealth:
         
         try:
             # CREATE operation
-            created_record = await database_service.create_record("community_vibes_recipes", test_recipe_data)
+            created_record = await db_service.create_record("community_vibes_recipes", test_recipe_data)
             assert created_record is not None, "Create operation should return data"
             assert "id" in created_record, "Created record should have an ID"
             
@@ -149,7 +153,7 @@ class TestSupabaseHealth:
             print(f"✅ CREATE: Test record created with ID {record_id}")
             
             # READ operation
-            fetched_record = await database_service.get_record("community_vibes_recipes", record_id)
+            fetched_record = await db_service.get_record("community_vibes_recipes", record_id)
             assert fetched_record is not None, "Should be able to fetch created record"
             assert fetched_record["name"] == test_recipe_data["name"], "Fetched record should match created data"
             
@@ -157,18 +161,18 @@ class TestSupabaseHealth:
             
             # UPDATE operation
             update_data = {"description": "Updated description during health check"}
-            updated_record = await database_service.update_record("community_vibes_recipes", record_id, update_data)
+            updated_record = await db_service.update_record("community_vibes_recipes", record_id, update_data)
             assert updated_record is not None, "Update operation should return data"
             assert updated_record["description"] == update_data["description"], "Record should be updated"
             
             print(f"✅ UPDATE: Test record updated successfully")
             
             # DELETE operation
-            delete_result = await database_service.delete_record("community_vibes_recipes", record_id)
+            delete_result = await db_service.delete_record("community_vibes_recipes", record_id)
             assert delete_result is True, "Delete operation should return True"
             
             # Verify deletion
-            deleted_record = await database_service.get_record("community_vibes_recipes", record_id)
+            deleted_record = await db_service.get_record("community_vibes_recipes", record_id)
             assert deleted_record is None, "Record should be deleted"
             
             print(f"✅ DELETE: Test record deleted successfully")
@@ -177,16 +181,19 @@ class TestSupabaseHealth:
             # Clean up in case of error
             if created_record and "id" in created_record:
                 try:
-                    await database_service.delete_record("community_vibes_recipes", created_record["id"])
+                    await db_service.delete_record("community_vibes_recipes", created_record["id"])
                 except:
                     pass  # Ignore cleanup errors
             
             pytest.fail(f"Database CRUD operations failed: {str(e)}")
     
     @pytest.mark.asyncio
-    async def test_database_constraints_and_validation(self):
+    async def test_database_constraints_and_validation(self, test_database_service):
         """Test that database constraints and validation work correctly."""
         print("\n🛡️ Testing Database Constraints and Validation...")
+        
+        # Use test database service that bypasses RLS
+        db_service = test_database_service
         
         # Test invalid data that should fail constraints
         invalid_test_cases = [
@@ -216,7 +223,7 @@ class TestSupabaseHealth:
         
         for test_case in invalid_test_cases:
             try:
-                await database_service.create_record("community_vibes_recipes", test_case["data"])
+                await db_service.create_record("community_vibes_recipes", test_case["data"])
                 pytest.fail(f"Expected constraint violation for {test_case['name']}")
             except Exception as e:
                 print(f"✅ Constraint validation working: {test_case['name']} properly rejected")

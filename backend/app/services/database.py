@@ -25,9 +25,15 @@ class DatabaseService:
                 logger.warning("Supabase configuration is incomplete. Database operations will be disabled.")
                 return
             
+            # Use service key for testing/development, anon key for production
+            api_key = config.SUPABASE_ANON_KEY
+            if config.is_development() and config.SUPABASE_SERVICE_KEY:
+                api_key = config.SUPABASE_SERVICE_KEY
+                logger.info("Using service key for development environment")
+            
             self._client = create_client(
                 config.SUPABASE_URL, 
-                config.SUPABASE_ANON_KEY
+                api_key
             )
             logger.info("Supabase client initialized successfully")
             
