@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Vibe Bar - Craft Your Perfect Cocktail",
   description: "AI-powered cocktail recipes tailored to your taste, ingredients, and mood",
+  icons: {
+    icon: [
+      { url: "/wine-glass.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/wine-glass.svg",
+  },
 };
 
 export default function RootLayout({
