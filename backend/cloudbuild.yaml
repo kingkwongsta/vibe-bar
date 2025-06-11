@@ -1,0 +1,42 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 'us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:$COMMIT_SHA',
+      '-t', 'us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:latest',
+      '.'
+    ]
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:latest']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run', 'deploy', 'vibe-bar-backend',
+      '--image', 'us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:$COMMIT_SHA',
+      '--region', 'us-west2',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--port', '8000',
+      '--memory', '1Gi',
+      '--cpu', '1',
+      '--min-instances', '0',
+      '--max-instances', '10',
+      '--concurrency', '80',
+      '--timeout', '300',
+      '--set-env-vars', 'ENVIRONMENT=production'
+    ]
+
+images:
+  - us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:$COMMIT_SHA
+  - us-west2-docker.pkg.dev/backend-services-437402/vibe-bar/vibe-bar-backend:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY 
