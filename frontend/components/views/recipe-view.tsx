@@ -147,15 +147,11 @@ export function RecipeView() {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3 pt-4 border-t">
-              <Button className="bg-red-500 hover:bg-red-600">
-                <Heart className="h-4 w-4 mr-2" />
-                Save Recipe
-              </Button>
               <Button variant="outline">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" onClick={handleBackToRecipeCreator} className="ml-auto">
+              <Button onClick={handleBackToRecipeCreator} className="ml-auto bg-orange-500 hover:bg-orange-600">
                 <Zap className="h-4 w-4 mr-2" />
                 Create Another
               </Button>
