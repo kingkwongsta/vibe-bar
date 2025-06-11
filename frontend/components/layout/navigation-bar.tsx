@@ -24,10 +24,10 @@ export const NavigationBar = React.memo(function NavigationBar() {
             </span>
           </button>
 
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="flex items-center space-x-4 sm:space-x-8">
             <button
               onClick={handleCreateClick}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-xs sm:text-sm font-medium transition-colors ${
                 currentView === "landing" 
                   ? "text-amber-600" 
                   : "text-gray-600 hover:text-amber-600"
@@ -38,7 +38,7 @@ export const NavigationBar = React.memo(function NavigationBar() {
             </button>
             <button
               onClick={() => setCurrentView("community")}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-xs sm:text-sm font-medium transition-colors ${
                 currentView === "community" 
                   ? "text-amber-600" 
                   : "text-gray-600 hover:text-amber-600"

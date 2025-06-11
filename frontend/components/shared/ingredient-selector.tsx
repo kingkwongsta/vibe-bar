@@ -75,7 +75,7 @@ export function IngredientSelector() {
         <Label className="text-lg font-semibold mb-4 block">Add additional ingredients</Label>
         <div className="space-y-2">
           <Input
-            placeholder="e.g., Aperol, Elderflower Liqueur, Angostura Bitters"
+            placeholder="e.g., Aperol, Elderflower..."
             value={customIngredientInput}
             onChange={(e) => handleCustomIngredientsChange(e.target.value)}
             className={getError('customIngredient') ? 'border-red-500' : ''}
