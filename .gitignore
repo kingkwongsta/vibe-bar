@@ -165,6 +165,9 @@ dmypy.json
 # DEPLOYMENT & DOCKER
 # =====================================
 
+# Vercel deployment artifacts
+.vercel
+
 # Docker
 Dockerfile.prod
 docker-compose.override.yml

@@ -72,7 +72,7 @@ export function usePerformanceMonitor(
 
 // Hook to track why a component re-rendered
 export function useWhyDidYouUpdate(name: string, props: Record<string, any>) {
-  const previousProps = useRef<Record<string, any>>()
+  const previousProps = useRef<Record<string, any> | undefined>(undefined)
 
   useEffect(() => {
     if (previousProps.current) {

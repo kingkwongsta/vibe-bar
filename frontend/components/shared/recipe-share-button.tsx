@@ -97,7 +97,7 @@ export function RecipeShareButton({
                 {copied ? 'Copied!' : 'Copy Link'}
               </Button>
               
-              {typeof navigator !== 'undefined' && navigator.share && (
+              {typeof navigator !== 'undefined' && 'share' in navigator && (
                 <Button
                   onClick={handleNativeShare}
                   variant="ghost"
@@ -153,7 +153,7 @@ export function RecipeShareButton({
               {copied ? 'Copied!' : 'Copy Recipe Link'}
             </Button>
             
-                         {typeof navigator !== 'undefined' && navigator.share && (
+                         {typeof navigator !== 'undefined' && 'share' in navigator && (
               <Button
                 onClick={handleNativeShare}
                 variant="outline"
