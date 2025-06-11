@@ -2,8 +2,7 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Star, Share2, Check } from "lucide-react"
-import { useShare } from "@/hooks/use-share"
+import { Clock, Star } from "lucide-react"
 import type { Recipe } from "@/lib/types"
 
 interface RecipeCardProps {
@@ -12,15 +11,6 @@ interface RecipeCardProps {
 }
 
 export const RecipeCard = React.memo<RecipeCardProps>(function RecipeCard({ recipe, onViewRecipe }) {
-  const { isShared, share } = useShare()
-
-  const handleShare = async () => {
-    await share({
-      title: `${recipe.name} Recipe`,
-      text: `Check out this delicious ${recipe.name} recipe! Ingredients: ${recipe.ingredients.slice(0, 3).join(', ')}...`,
-      url: window.location.href,
-    })
-  }
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-white/90 backdrop-blur-sm border-0">
       <CardHeader>
@@ -58,13 +48,6 @@ export const RecipeCard = React.memo<RecipeCardProps>(function RecipeCard({ reci
         <div className="flex gap-2">
           <Button size="sm" className="flex-1" onClick={onViewRecipe}>
             View Recipe
-          </Button>
-          <Button size="sm" variant="outline" onClick={handleShare}>
-            {isShared ? (
-              <Check className="h-3 w-3 text-green-500" />
-            ) : (
-              <Share2 className="h-3 w-3" />
-            )}
           </Button>
         </div>
       </CardContent>
