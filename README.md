@@ -4,7 +4,7 @@
 
 Vibe Bar is a modern web application that generates personalized cocktail recipes using advanced AI/LLM integration. Instead of browsing static recipe databases, users input their preferences and available ingredients to receive unique, creative cocktail suggestions tailored to their taste and bar inventory.
 
-![Vibe Bar Demo](https://via.placeholder.com/800x400/1a1a1a/ffffff?text=Vibe+Bar+Demo)
+**Live at**: [https://vibe-bar.vercel.app/](https://vibe-bar.vercel.app/)
 
 ## 🎯 Product Overview
 
