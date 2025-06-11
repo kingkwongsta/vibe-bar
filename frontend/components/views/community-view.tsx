@@ -18,11 +18,11 @@ import {
 } from "lucide-react"
 import { useVibeBarContext } from "@/app/context/vibe-bar-context"
 import { useState, useEffect } from "react"
-import { getCommunityRecipes, type CommunityRecipe } from "@/lib/api"
+import { getCommunityRecipes, type CommunityRecipe, type CocktailRecipe } from "@/lib/api"
 import { INGREDIENTS } from "@/lib/constants"
 
 export function CommunityView() {
-  const { setCurrentView } = useVibeBarContext()
+  const { setCurrentView, setGeneratedRecipe } = useVibeBarContext()
   const [recipes, setRecipes] = useState<CommunityRecipe[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -114,6 +114,36 @@ export function CommunityView() {
     return null
   }
   
+  // Convert CommunityRecipe to CocktailRecipe format for display in RecipeView
+  const convertCommunityRecipeToDisplay = (communityRecipe: CommunityRecipe): CocktailRecipe => {
+    return {
+      recipeTitle: communityRecipe.name,
+      recipeDescription: communityRecipe.description,
+      recipeMeta: communityRecipe.meta && communityRecipe.meta.length > 0 
+        ? communityRecipe.meta 
+        : [
+            { text: communityRecipe.prep_time_minutes ? `${communityRecipe.prep_time_minutes} min` : "Unknown prep time" },
+            { text: communityRecipe.difficulty_level || "Unknown difficulty" },
+            { text: communityRecipe.servings ? `${communityRecipe.servings} serving${communityRecipe.servings > 1 ? 's' : ''}` : "Unknown serving" }
+          ],
+      recipeIngredients: communityRecipe.ingredients,
+      recipeInstructions: communityRecipe.instructions,
+      recipeDetails: communityRecipe.details && communityRecipe.details.length > 0 
+        ? communityRecipe.details 
+        : [
+            { title: "Glassware", content: "Standard cocktail glass" },
+            { title: "Garnish", content: "As desired" }
+          ]
+    }
+  }
+
+  // Handle viewing a community recipe
+  const handleViewRecipe = (recipe: CommunityRecipe) => {
+    const displayRecipe = convertCommunityRecipeToDisplay(recipe)
+    setGeneratedRecipe(displayRecipe)
+    setCurrentView("recipe")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <NavigationBar />
@@ -240,7 +270,7 @@ export function CommunityView() {
                     </div>
                   </div>
                   <div>
-                    <Button size="sm" className="w-full bg-orange-400 hover:bg-orange-600 text-white" onClick={() => setCurrentView("recipe")}>
+                    <Button size="sm" className="w-full bg-orange-400 hover:bg-orange-600 text-white" onClick={() => handleViewRecipe(recipe)}>
                       View Recipe
                     </Button>
                   </div>
